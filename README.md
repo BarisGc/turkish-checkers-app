@@ -1,2 +1,2 @@
 # Development Stage: 
-- https://app.patika.dev/courses/redux/turkish-checkers-app
+- Target: https://app.patika.dev/courses/redux/turkish-checkers-app
