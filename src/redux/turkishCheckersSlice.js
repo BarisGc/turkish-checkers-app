@@ -52,10 +52,9 @@ const gameProcess = {
 // }
 
 // Building the Table & Initial Checkers
-// Bunlar async await yapılmalı mı?
 const checkers = [];
+// Preparing Initial Table
 let counter = 1;
-
 for (let i = 1; i < 9; i++) {
     for (let j = 1; j < 9; j++) {
         if ((counter > 8 && counter < 25)) {
@@ -220,7 +219,6 @@ for (let i = 1; i < 9; i++) {
         counter++;
     }
 }
-
 // Preparing Initial "AllowedMoves" of Checkers
 for (let checker of checkers) {
     let allowedMovesDefiner = () => {
@@ -262,7 +260,7 @@ export const turkishCheckersSlice = createSlice({
             console.log("currentChecker", currentChecker)
             console.log("nextChecker", nextChecker)
 
-            checkers.forEach((element) => {
+            state.checkers.forEach((element) => {
                 if (element.id == currentChecker.id) {
                     if (element.allowedMoves.includes(nextChecker.currentPosition)) {
                         element.currentPosition = nextChecker.currentPosition
