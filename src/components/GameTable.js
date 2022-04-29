@@ -1,23 +1,30 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch, } from 'react-redux';
-import { getCheckerMove } from '../redux/turkishCheckersSlice'
+import { updateGameProcess } from '../redux/turkishCheckersSlice'
 import { SimpleGrid, Box } from '@chakra-ui/react'
+
 function GameTable() {
     const dispatch = useDispatch();
-    //States & Selectors
+    //states & Selectors
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
     let user1Settings = useSelector((state) => state.turkishCheckers.user1Settings);
     let user2Settings = useSelector((state) => state.turkishCheckers.user2Settings);
     let gameSettings = useSelector((state) => state.turkishCheckers.gameSettings);
     let gameProcess = useSelector((state) => state.turkishCheckers.gameProcess);
 
-    let clickedCheckerData = gameProcess.data
-    let clickedCheckerLocations = {
-        previousLocation: gameProcess.previousLocation,
-        currentLocation: gameProcess.currentLocation,
-    }
     // LocalStates
-    const [clickedChecker, setClickedChecker] = useState(null)
+    const [currentChecker, setCurrentChecker] = useState('')
+    const [nextChecker, setNextChecker] = useState({
+        checker: [],
+        newAllowedMoves: [],
+    })
+
+    useEffect(() => {
+        dispatch(updateGameProcess({
+            currentChecker,
+            nextChecker
+        }))
+    }, [currentChecker, dispatch, nextChecker])
 
     // {
     //     id: counter,
@@ -33,64 +40,65 @@ function GameTable() {
     // }
     const handleCheckerMove = ((checker) => {
 
-        console.log("checker", checker)
-        console.log("checkedCurrentPosition", checker.currentPosition)
+        if (currentChecker == '') {
+            setCurrentChecker(checker)
+        } else if (currentChecker.type == checker.type) {
+            setCurrentChecker(checker)
+        }
+        else if ((currentChecker.currentPosition != checker.currentPosition)) {
 
-        // Comparison, the checker if it is picked or moved?
-        if (clickedChecker == null) {
-            setClickedChecker(checker)
-            console.log(checker.currentPosition, "is picked")
-        } else if (clickedChecker.currentPosition != checker.currentPosition) {
-            setClickedChecker(checker)
-            //Comparison, the checker if it is white or black?
+            //Comparison, the checker if it is white or black or dummy & Define "newAllowedMoves"
             if (checker.type == 'blackChecker') {
                 if (((checker.currentPosition - 1) % 8) == 0) {
-                    dispatch(getCheckerMove({
-                        clickedChecker: clickedChecker,
+                    setNextChecker({
+                        checkerData: checker,
                         newAllowedMoves: [checker.currentPosition + 1, checker.currentPosition + 8]
-                    }))
+                    })
                 } else if (checker.currentPosition % 8 == 0) {
-                    dispatch(getCheckerMove({
-                        clickedChecker: clickedChecker,
+                    setNextChecker(({
+                        checkerData: checker,
                         newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition + 8]
                     }))
                 } else {
-                    dispatch(getCheckerMove({
-                        clickedChecker: clickedChecker,
+                    setNextChecker(({
+                        checkerData: checker,
                         newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition + 8]
                     }))
                 }
             } else if (checker.type == 'whiteChecker') {
                 if (((checker.currentPosition - 1) % 8) == 0) {
-                    dispatch(getCheckerMove({
-                        clickedChecker: clickedChecker,
+                    setNextChecker(({
+                        checkerData: checker,
                         newAllowedMoves: [checker.currentPosition + 1, checker.currentPosition - 8]
                     }))
                 } else if (checker.currentPosition % 8 == 0) {
-                    dispatch(getCheckerMove({
-                        clickedChecker: clickedChecker,
+                    setNextChecker(({
+                        checkerData: checker,
                         newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition - 8]
                     }))
                 } else {
-                    dispatch(getCheckerMove({
-                        clickedChecker: clickedChecker,
+                    setNextChecker(({
+                        checkerData: checker,
                         newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition - 8]
                     }))
                 }
+            } else {
+                setNextChecker(({
+                    checkerData: checker,
+                    newAllowedMoves: []
+                }))
             }
-            setClickedChecker(null)
-            console.log("checker is moved to ", checker.currentPosition)
-        } else if (clickedChecker.currentPosition == checker.currentPosition) {
-            setClickedChecker(null)
+        } else if (currentChecker.currentPosition == checker.currentPosition) {
+            setCurrentChecker('')
         }
     })
-    console.log("clickedChecker", clickedChecker)
+
     return (
         <>
             <SimpleGrid mt={16} columns={8} spacing={0} className='checkersTable' boxShadow='dark-lg' p='6' rounded='md' bg='white'>
                 {checkers.map((checker, index) => (
                     <Box key={index} border='1px' borderColor='Gray.900' borderStyle='groove'
-                        className={`cell ${clickedChecker == checker ? "pickedCell" : ""}`} onClick={() => handleCheckerMove(checker)} >
+                        className={`cell ${currentChecker == checker ? "pickedCell" : ""}`} onClick={() => handleCheckerMove(checker)} >
                         <img alt='checkerImage' className='checkersImage' id={checker.id} src={checker.imageUrl} />
 
                         <span href="#" className="checkerNumber" >

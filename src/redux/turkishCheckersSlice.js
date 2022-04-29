@@ -27,15 +27,16 @@ const gameSettings = [{
         player2: 0,
     }
 }];
-
-const gameProcess = [{
+const gameProcess = {
     turnOfUser: 'Player2', // Player1 or Player2
-    clickedChecker: {
+    checker: {
+        isPicked: false,
         data: [],
-        previousLocation: 0,
-        currentLocation: 0,
+        previousPosition: 0,
+        currentPosition: 0,
+        newAllowedMoves: [],
     }
-}];
+};
 
 // {
 //     id: counter,
@@ -250,29 +251,30 @@ export const turkishCheckersSlice = createSlice({
     name: 'turkishCheckers',
     initialState: {
         checkers: checkers,
-
         user1Settings,
         user2Settings,
         gameSettings: gameSettings,
-
         gameProcess: gameProcess,
     },
     reducers: {
-        getCheckerMove: (state, action) => {
-            console.log("newcheckerdata", action.payload)
-            const { clickedChecker, newAllowedMoves } = action.payload;
-            const checkersNewData = state.checkers.forEach((oldChecker) => {
-                if (oldChecker.id == clickedChecker.id) {
-                    oldChecker.allowedMoves = newAllowedMoves
-                    oldChecker.currentPosition = clickedChecker.currentPosition
+        updateGameProcess: (state, action) => {
+            const { currentChecker, nextChecker } = action.payload;
+            console.log("currentChecker", currentChecker)
+            console.log("nextChecker", nextChecker)
+
+            checkers.forEach((element) => {
+                if (element.id == currentChecker.id) {
+                    if (element.allowedMoves.includes(nextChecker.currentPosition)) {
+                        element.currentPosition = nextChecker.currentPosition
+                        element.allowedMoves = nextChecker.allowedMoves
+                    }
                 }
             })
-            state.checkers = checkersNewData
         },
     },
     extraReducers: {
     }
 });
 
-export const { getCheckerMove } = turkishCheckersSlice.actions;
+export const { updateGameProcess } = turkishCheckersSlice.actions;
 export default turkishCheckersSlice.reducer;
