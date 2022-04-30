@@ -14,27 +14,16 @@ function GameTable() {
 
     // LocalStates
     const [currentChecker, setCurrentChecker] = useState('')
-    const [nextChecker, setNextChecker] = useState({
-        checker: '',
+    const [currentCheckerUpdatedData, setCurrentCheckerUpdatedData] = useState({
+        nextPosition: '',
         newAllowedMoves: '',
     })
 
     console.log("currentCheckerGameProcess", currentChecker)
-    console.log("newCheckerDataGameProcess", nextChecker)
+    console.log("newCheckerDataGameProcess", currentCheckerUpdatedData)
 
-    // {
-    //     id: counter,
-    //     type: 'blackChecker',
-    //     imageUrl: '/assets/blackStone_on_whiteArea.png',
-    //     startingPosition: counter,
-    //     currentPosition: counter,
-    //     allowedMoves: [],
-    //     isWeak: false,
-    //     isForcedToKill: false,
-    //     isRemoved: false,
-    //     isSuperChecker: false
-    // }
-    const handleCheckerMove = ((newChecker, nextPosition) => {
+
+    const handleCheckerMove = ((newChecker, clickedCellNumber) => {
 
         if (currentChecker == '') {
             setCurrentChecker(newChecker)
@@ -46,41 +35,41 @@ function GameTable() {
             //Comparison, the newChecker if it is white or black or dummy & Define "newAllowedMoves"
             if (newChecker.type == 'blackChecker') {
                 if (((newChecker.currentPosition - 1) % 8) == 0) {
-                    setNextChecker({
-                        checkerData: newChecker,
+                    setCurrentCheckerUpdatedData({
+                        nextPosition: clickedCellNumber,
                         newAllowedMoves: [newChecker.currentPosition + 1, newChecker.currentPosition + 8]
                     })
                 } else if (newChecker.currentPosition % 8 == 0) {
-                    setNextChecker(({
-                        checkerData: newChecker,
+                    setCurrentCheckerUpdatedData(({
+                        nextPosition: clickedCellNumber,
                         newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 8]
                     }))
                 } else {
-                    setNextChecker(({
-                        checkerData: newChecker,
+                    setCurrentCheckerUpdatedData(({
+                        nextPosition: clickedCellNumber,
                         newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition + 8]
                     }))
                 }
             } else if (newChecker.type == 'whiteChecker') {
                 if (((newChecker.currentPosition - 1) % 8) == 0) {
-                    setNextChecker(({
-                        checkerData: newChecker,
+                    setCurrentCheckerUpdatedData(({
+                        nextPosition: clickedCellNumber,
                         newAllowedMoves: [newChecker.currentPosition + 1, newChecker.currentPosition - 8]
                     }))
                 } else if (newChecker.currentPosition % 8 == 0) {
-                    setNextChecker(({
-                        checkerData: newChecker,
+                    setCurrentCheckerUpdatedData(({
+                        nextPosition: clickedCellNumber,
                         newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition - 8]
                     }))
                 } else {
-                    setNextChecker(({
-                        checkerData: newChecker,
+                    setCurrentCheckerUpdatedData(({
+                        nextPosition: clickedCellNumber,
                         newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition - 8]
                     }))
                 }
             } else {
-                setNextChecker(({
-                    checkerData: newChecker,
+                setCurrentCheckerUpdatedData(({
+                    nextPosition: clickedCellNumber,
                     newAllowedMoves: []
                 }))
             }
@@ -90,14 +79,14 @@ function GameTable() {
     })
 
     useEffect(() => {
-        if (nextChecker.checker) {
+        if (currentCheckerUpdatedData.checker) {
             dispatch(updateGameProcess({
                 currentChecker,
-                nextChecker,
+                currentCheckerUpdatedData,
             }))
 
         }
-    }, [dispatch, nextChecker])
+    }, [dispatch, currentCheckerUpdatedData])
 
 
 
@@ -119,12 +108,26 @@ function GameTable() {
                         onClick={() => handleCheckerMove(newChecker, index)}
                     >
                         <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
-                    </svg> :
-                    <svg key={index} className='checkerIcons blackIcon'
-                        onClick={() => handleCheckerMove(newChecker, index)}
-                    >
-                        <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
-                    </svg>
+                    </svg> : (newChecker.type) == "blackChecker" ?
+                        <svg key={index} className='checkerIcons blackIcon'
+                            onClick={() => handleCheckerMove(newChecker, index)}
+                        >
+                            <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
+                        </svg> :
+                        <div className='dummyIcon' onClick={() => handleCheckerMove({
+                            id: index,
+                            type: 'blackChecker',
+                            imageUrl: '/assets/blackStone_on_whiteArea.png',
+                            startingPosition: index,
+                            currentPosition: index,
+                            allowedMoves: [],
+                            isWeak: false,
+                            isForcedToKill: false,
+                            isRemoved: false,
+                            isSuperChecker: false
+                        }, index)}>
+                            test
+                        </div >
                 // <Icon as={BsCircle} key={index} className='checkerIcons whiteIcon' /> :
                 // <Icon as={BsCircleFill} key={index} className='checkerIcons' />
             )

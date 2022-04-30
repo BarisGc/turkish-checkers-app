@@ -62,3 +62,7 @@
     color: #313131;
     cursor: pointer !important;
 }
+
+.dummyIcon {
+    cursor: pointer !important;
+}
