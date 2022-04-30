@@ -2,6 +2,10 @@
 
 /* Checkers */
 
+.checkersTable {
+    width: 80vh;
+    height: 80vh;
+}
 
 .checkersImage {
     width: 100%;
@@ -10,6 +14,19 @@
 
 .cell {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 9vh;
+    height: 9vh;
+}
+
+.cell.backgroundWhite {
+    background-color: #FFFFFF;
+}
+
+.cell.backgroundGray {
+    background-color: #BFBFBF;
 }
 
 .checkerNumber {
@@ -25,4 +42,23 @@
 .pickedCell {
     outline: #525E75 solid 0.5vh;
     z-index: 60;
+}
+
+
+.checkerIcons {
+    width: 50% !important;
+    height: 50% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.checkerIcons.whiteIcon {
+    color: #E2E2E2;
+    cursor: pointer !important;
+}
+
+.checkerIcons.blackIcon {
+    color: #313131;
+    cursor: pointer !important;
 }

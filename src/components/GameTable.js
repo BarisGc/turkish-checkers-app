@@ -1,30 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch, } from 'react-redux';
 import { updateGameProcess } from '../redux/turkishCheckersSlice'
-import { SimpleGrid, Box } from '@chakra-ui/react'
+import { SimpleGrid, Box, Icon } from '@chakra-ui/react'
+
+import { BsCircleFill, BsCircle } from 'react-icons/bs';
 
 function GameTable() {
     const dispatch = useDispatch();
     //states & Selectors
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
-    let user1Settings = useSelector((state) => state.turkishCheckers.user1Settings);
-    let user2Settings = useSelector((state) => state.turkishCheckers.user2Settings);
-    let gameSettings = useSelector((state) => state.turkishCheckers.gameSettings);
-    let gameProcess = useSelector((state) => state.turkishCheckers.gameProcess);
+    let table = useSelector((state) => state.turkishCheckers.table);
+
 
     // LocalStates
     const [currentChecker, setCurrentChecker] = useState('')
     const [nextChecker, setNextChecker] = useState({
-        checker: [],
-        newAllowedMoves: [],
+        checker: '',
+        newAllowedMoves: '',
     })
 
-    useEffect(() => {
-        dispatch(updateGameProcess({
-            currentChecker,
-            nextChecker
-        }))
-    }, [currentChecker, dispatch, nextChecker])
+    console.log("currentCheckerGameProcess", currentChecker)
+    console.log("newCheckerDataGameProcess", nextChecker)
 
     // {
     //     id: counter,
@@ -38,72 +34,120 @@ function GameTable() {
     //     isRemoved: false,
     //     isSuperChecker: false
     // }
-    const handleCheckerMove = ((checker) => {
+    const handleCheckerMove = ((newChecker, nextPosition) => {
 
         if (currentChecker == '') {
-            setCurrentChecker(checker)
-        } else if (currentChecker.type == checker.type) {
-            setCurrentChecker(checker)
+            setCurrentChecker(newChecker)
+        } else if (currentChecker.type == newChecker.type) {
+            setCurrentChecker(newChecker)
         }
-        else if ((currentChecker.currentPosition != checker.currentPosition)) {
+        else if ((currentChecker.currentPosition != newChecker.currentPosition)) {
 
-            //Comparison, the checker if it is white or black or dummy & Define "newAllowedMoves"
-            if (checker.type == 'blackChecker') {
-                if (((checker.currentPosition - 1) % 8) == 0) {
+            //Comparison, the newChecker if it is white or black or dummy & Define "newAllowedMoves"
+            if (newChecker.type == 'blackChecker') {
+                if (((newChecker.currentPosition - 1) % 8) == 0) {
                     setNextChecker({
-                        checkerData: checker,
-                        newAllowedMoves: [checker.currentPosition + 1, checker.currentPosition + 8]
+                        checkerData: newChecker,
+                        newAllowedMoves: [newChecker.currentPosition + 1, newChecker.currentPosition + 8]
                     })
-                } else if (checker.currentPosition % 8 == 0) {
+                } else if (newChecker.currentPosition % 8 == 0) {
                     setNextChecker(({
-                        checkerData: checker,
-                        newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition + 8]
+                        checkerData: newChecker,
+                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 8]
                     }))
                 } else {
                     setNextChecker(({
-                        checkerData: checker,
-                        newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition + 8]
+                        checkerData: newChecker,
+                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition + 8]
                     }))
                 }
-            } else if (checker.type == 'whiteChecker') {
-                if (((checker.currentPosition - 1) % 8) == 0) {
+            } else if (newChecker.type == 'whiteChecker') {
+                if (((newChecker.currentPosition - 1) % 8) == 0) {
                     setNextChecker(({
-                        checkerData: checker,
-                        newAllowedMoves: [checker.currentPosition + 1, checker.currentPosition - 8]
+                        checkerData: newChecker,
+                        newAllowedMoves: [newChecker.currentPosition + 1, newChecker.currentPosition - 8]
                     }))
-                } else if (checker.currentPosition % 8 == 0) {
+                } else if (newChecker.currentPosition % 8 == 0) {
                     setNextChecker(({
-                        checkerData: checker,
-                        newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition - 8]
+                        checkerData: newChecker,
+                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition - 8]
                     }))
                 } else {
                     setNextChecker(({
-                        checkerData: checker,
-                        newAllowedMoves: [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition - 8]
+                        checkerData: newChecker,
+                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition - 8]
                     }))
                 }
             } else {
                 setNextChecker(({
-                    checkerData: checker,
+                    checkerData: newChecker,
                     newAllowedMoves: []
                 }))
             }
-        } else if (currentChecker.currentPosition == checker.currentPosition) {
+        } else if (currentChecker.currentPosition == newChecker.currentPosition) {
             setCurrentChecker('')
         }
     })
 
+    useEffect(() => {
+        if (nextChecker.checker) {
+            dispatch(updateGameProcess({
+                currentChecker,
+                nextChecker,
+            }))
+
+        }
+    }, [dispatch, nextChecker])
+
+
+
+
+
+
+
+
+    // Locate Checkers on Table
+    let checkersLocated = []
+    const checkerLocater = (index) => {
+        console.log("checkerLocater")
+        if (checkers.find((checker) => (checker.currentPosition == index)) != undefined) {
+            checkersLocated = []
+            let newChecker = (checkers.find((checker) => (checker.currentPosition == index)))
+            checkersLocated.push(
+                (newChecker.type) == "whiteChecker" ?
+                    <svg key={index} className='checkerIcons whiteIcon'
+                        onClick={() => handleCheckerMove(newChecker, index)}
+                    >
+                        <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
+                    </svg> :
+                    <svg key={index} className='checkerIcons blackIcon'
+                        onClick={() => handleCheckerMove(newChecker, index)}
+                    >
+                        <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
+                    </svg>
+                // <Icon as={BsCircle} key={index} className='checkerIcons whiteIcon' /> :
+                // <Icon as={BsCircleFill} key={index} className='checkerIcons' />
+            )
+            return checkersLocated
+        }
+    }
+
+
+    console.log("checkerList", checkers)
     return (
         <>
             <SimpleGrid mt={16} columns={8} spacing={0} className='checkersTable' boxShadow='dark-lg' p='6' rounded='md' bg='white'>
-                {checkers.map((checker, index) => (
+                {table.map((area, index) => (
                     <Box key={index} border='1px' borderColor='Gray.900' borderStyle='groove'
-                        className={`cell ${currentChecker == checker ? "pickedCell" : ""}`} onClick={() => handleCheckerMove(checker)} >
-                        <img alt='checkerImage' className='checkersImage' id={checker.id} src={checker.imageUrl} />
+                        className={`cell ${area == 'gray' ? 'backgroundGray' : 'backgroundWhite'} 
+                        ${index + 1 == currentChecker.currentPosition ? 'pickedCell' : ''}`} >
 
-                        <span href="#" className="checkerNumber" >
+                        {checkerLocater(index + 1)}
+
+                        <div href="#" className="checkerNumber" >
                             {index + 1}
-                        </span>
+                        </div>
+
                     </Box>
                 ))}
             </SimpleGrid>

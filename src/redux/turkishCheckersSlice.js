@@ -52,8 +52,19 @@ const gameProcess = {
 // }
 
 // Building the Table & Initial Checkers
-const checkers = [];
 // Preparing Initial Table
+const table = [];
+for (let i = 1; i < 9; i++) {
+    for (let j = 1; j < 9; j++) {
+
+        if (i % 2 !== 0 && j % 2 !== 0) table.push("white")
+        else if (i % 2 !== 0 && j % 2 === 0) table.push("gray")
+        else if (i % 2 === 0 && j % 2 !== 0) table.push('gray')
+        else if (i % 2 === 0 && j % 2 === 0) table.push('white')
+    }
+}
+// Preparing Initial Checkers
+const checkers = [];
 let counter = 1;
 for (let i = 1; i < 9; i++) {
     for (let j = 1; j < 9; j++) {
@@ -62,7 +73,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'blackChecker',
-                    imageUrl: '/assets/blackStone_on_whiteArea.png',
                     startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
@@ -75,7 +85,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'blackChecker',
-                    imageUrl: '/assets/blackStone_on_grayArea.png',
                     startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
@@ -88,7 +97,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 !== 0) checkers.push({
                 id: counter,
                 type: 'blackChecker',
-                imageUrl: '/assets/blackStone_on_grayArea.png',
                 startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
@@ -100,7 +108,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 === 0) checkers.push({
                 id: counter,
                 type: 'blackChecker',
-                imageUrl: '/assets/blackStone_on_whiteArea.png',
                 startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
@@ -115,7 +122,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'whiteChecker',
-                    imageUrl: '/assets/whiteStone_on_whiteArea.png',
                     startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
@@ -129,7 +135,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'whiteChecker',
-                    imageUrl: '/assets/whiteStone_on_grayArea.png',
                     startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
@@ -142,7 +147,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 !== 0) checkers.push({
                 id: counter,
                 type: 'whiteChecker',
-                imageUrl: '/assets/whiteStone_on_grayArea.png',
                 startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
@@ -154,7 +158,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 === 0) checkers.push({
                 id: counter,
                 type: 'whiteChecker',
-                imageUrl: '/assets/whiteStone_on_whiteArea.png',
                 startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
@@ -164,91 +167,43 @@ for (let i = 1; i < 9; i++) {
                 isSuperChecker: false
             })
         }
-        else if (i % 2 !== 0 && j % 2 !== 0) checkers.push(
-            {
-                id: counter,
-                type: 'dummyChecker_empty_whiteArea',
-                imageUrl: '/assets/empty_whiteArea.png',
-                startingPosition: counter,
-                currentPosition: counter,
-                allowedMoves: [],
-                isWeak: false,
-                isForcedToKill: false,
-                isRemoved: false,
-                isSuperChecker: false
-            }
-        )
-        else if (i % 2 !== 0 && j % 2 === 0) checkers.push(
-            {
-                id: counter,
-                type: 'dummyChecker_empty_grayArea',
-                imageUrl: '/assets/empty_grayArea.png',
-                startingPosition: counter,
-                currentPosition: counter,
-                allowedMoves: [],
-                isWeak: false,
-                isForcedToKill: false,
-                isRemoved: false,
-                isSuperChecker: false
-            }
-        )
-        else if (i % 2 === 0 && j % 2 !== 0) checkers.push({
-            id: counter,
-            type: 'dummyChecker_empty_grayArea',
-            imageUrl: '/assets/empty_grayArea.png',
-            startingPosition: counter,
-            currentPosition: counter,
-            allowedMoves: [],
-            isWeak: false,
-            isForcedToKill: false,
-            isRemoved: false,
-            isSuperChecker: false
-        })
-        else if (i % 2 === 0 && j % 2 === 0) checkers.push({
-            id: counter,
-            type: 'dummyChecker_empty_whiteArea',
-            imageUrl: '/assets/empty_whiteArea.png',
-            startingPosition: counter,
-            currentPosition: counter,
-            allowedMoves: [],
-            isWeak: false,
-            isForcedToKill: false,
-            isRemoved: false,
-            isSuperChecker: false
-        })
         counter++;
     }
 }
 // Preparing Initial "AllowedMoves" of Checkers
-for (let checker of checkers) {
-    let allowedMovesDefiner = () => {
-        if (checker.type == 'blackChecker') {
-            if (((checker.currentPosition - 1) % 8) == 0) {
-                return [checker.currentPosition + 1, checker.currentPosition + 8]
-            } else if (checker.currentPosition % 8 == 0) {
-                return [checker.currentPosition - 1, checker.currentPosition + 8]
-            } else {
-                return [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition + 8]
-            }
-        } else if (checker.type == 'whiteChecker') {
-            if (((checker.currentPosition - 1) % 8) == 0) {
-                return [checker.currentPosition + 1, checker.currentPosition - 8]
-            } else if (checker.currentPosition % 8 == 0) {
-                return [checker.currentPosition - 1, checker.currentPosition - 8]
-            } else {
-                return [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition - 8]
-            }
+export let allowedMovesDefiner = (checker) => {
+    if (checker.type == 'blackChecker') {
+        if (((checker.currentPosition - 1) % 8) == 0) {
+            return [checker.currentPosition + 1, checker.currentPosition + 8]
+        } else if (checker.currentPosition % 8 == 0) {
+            return [checker.currentPosition - 1, checker.currentPosition + 8]
         } else {
-            return ['dummyChecker']
+            return [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition + 8]
         }
+    } else if (checker.type == 'whiteChecker') {
+        if (((checker.currentPosition - 1) % 8) == 0) {
+            return [checker.currentPosition + 1, checker.currentPosition - 8]
+        } else if (checker.currentPosition % 8 == 0) {
+            return [checker.currentPosition - 1, checker.currentPosition - 8]
+        } else {
+            return [checker.currentPosition - 1, checker.currentPosition + 1, checker.currentPosition - 8]
+        }
+    } else {
+        return ['dummyChecker']
     }
-    checker.allowedMoves = allowedMovesDefiner()
 }
+for (let checker of checkers) {
+    checker.allowedMoves = allowedMovesDefiner(checker)
+}
+
+
+
 
 export const turkishCheckersSlice = createSlice({
     name: 'turkishCheckers',
     initialState: {
         checkers: checkers,
+        table: table,
         user1Settings,
         user2Settings,
         gameSettings: gameSettings,
@@ -256,18 +211,14 @@ export const turkishCheckersSlice = createSlice({
     },
     reducers: {
         updateGameProcess: (state, action) => {
-            const { currentChecker, nextChecker } = action.payload;
-            console.log("currentChecker", currentChecker)
-            console.log("nextChecker", nextChecker)
-
-            state.checkers.forEach((element) => {
-                if (element.id == currentChecker.id) {
-                    if (element.allowedMoves.includes(nextChecker.currentPosition)) {
-                        element.currentPosition = nextChecker.currentPosition
-                        element.allowedMoves = nextChecker.allowedMoves
-                    }
-                }
-            })
+            const { currentChecker, newCheckerData } = action.payload;
+            if (newCheckerData.checker != '') {
+                let updatedChecker = state.checkers.find((item) => (item.currentPosition == currentChecker.currentPosition))
+                updatedChecker.currentPosition = newCheckerData.checker.currentPosition;
+                updatedChecker.allowedMoves = newCheckerData.allowedMoves
+            }
+            console.log("currentCheckerGameProcess", currentChecker)
+            console.log("newCheckerDataGameProcess", newCheckerData)
         },
     },
     extraReducers: {
