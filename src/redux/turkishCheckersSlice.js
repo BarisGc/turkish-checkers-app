@@ -42,7 +42,6 @@ const gameProcess = {
 //     id: counter,
 //     type: 'blackChecker',
 //     imageUrl: '/assets/blackStone_on_whiteArea.png',
-//     startingPosition: counter,
 //     currentPosition: counter,
 //     allowedMoves: [],
 //     isWeak: false,
@@ -73,7 +72,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'blackChecker',
-                    startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
                     isWeak: false,
@@ -85,7 +83,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'blackChecker',
-                    startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
                     isWeak: false,
@@ -97,7 +94,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 !== 0) checkers.push({
                 id: counter,
                 type: 'blackChecker',
-                startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
                 isWeak: false,
@@ -108,7 +104,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 === 0) checkers.push({
                 id: counter,
                 type: 'blackChecker',
-                startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
                 isWeak: false,
@@ -122,7 +117,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'whiteChecker',
-                    startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
                     isWeak: false,
@@ -135,7 +129,6 @@ for (let i = 1; i < 9; i++) {
                 {
                     id: counter,
                     type: 'whiteChecker',
-                    startingPosition: counter,
                     currentPosition: counter,
                     allowedMoves: [],
                     isWeak: false,
@@ -147,7 +140,6 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 !== 0) checkers.push({
                 id: counter,
                 type: 'whiteChecker',
-                startingPosition: counter,
                 currentPosition: counter,
                 allowedMoves: [],
                 isWeak: false,
@@ -158,7 +150,17 @@ for (let i = 1; i < 9; i++) {
             else if (i % 2 === 0 && j % 2 === 0) checkers.push({
                 id: counter,
                 type: 'whiteChecker',
-                startingPosition: counter,
+                currentPosition: counter,
+                allowedMoves: [],
+                isWeak: false,
+                isForcedToKill: false,
+                isRemoved: false,
+                isSuperChecker: false
+            })
+        } else {
+            checkers.push({
+                id: counter,
+                type: 'dummyChecker',
                 currentPosition: counter,
                 allowedMoves: [],
                 isWeak: false,
@@ -211,14 +213,8 @@ export const turkishCheckersSlice = createSlice({
     },
     reducers: {
         updateGameProcess: (state, action) => {
-            const { currentChecker, newCheckerData } = action.payload;
-            if (newCheckerData.checker != '') {
-                let updatedChecker = state.checkers.find((item) => (item.currentPosition == currentChecker.currentPosition))
-                updatedChecker.currentPosition = newCheckerData.checker.currentPosition;
-                updatedChecker.allowedMoves = newCheckerData.allowedMoves
-            }
-            console.log("currentCheckerGameProcess", currentChecker)
-            console.log("newCheckerDataGameProcess", newCheckerData)
+            state.checkers = action.payload;
+
         },
     },
     extraReducers: {

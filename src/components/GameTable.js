@@ -3,14 +3,12 @@ import { useSelector, useDispatch, } from 'react-redux';
 import { updateGameProcess } from '../redux/turkishCheckersSlice'
 import { SimpleGrid, Box, Icon } from '@chakra-ui/react'
 
-import { BsCircleFill, BsCircle } from 'react-icons/bs';
-
 function GameTable() {
     const dispatch = useDispatch();
     //states & Selectors
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
     let table = useSelector((state) => state.turkishCheckers.table);
-
+    console.log("checkerList", checkers)
 
     // LocalStates
     const [currentChecker, setCurrentChecker] = useState('')
@@ -19,9 +17,8 @@ function GameTable() {
         newAllowedMoves: '',
     })
 
-    console.log("currentCheckerGameProcess", currentChecker)
-    console.log("newCheckerDataGameProcess", currentCheckerUpdatedData)
-
+    console.log("currentChecker", currentChecker)
+    console.log("currentCheckerUpdatedData", currentCheckerUpdatedData)
 
     const handleCheckerMove = ((newChecker, clickedCellNumber) => {
 
@@ -29,9 +26,7 @@ function GameTable() {
             setCurrentChecker(newChecker)
         } else if (currentChecker.type == newChecker.type) {
             setCurrentChecker(newChecker)
-        }
-        else if ((currentChecker.currentPosition != newChecker.currentPosition)) {
-
+        } else if ((currentChecker.currentPosition != newChecker.currentPosition)) {
             //Comparison, the newChecker if it is white or black or dummy & Define "newAllowedMoves"
             if (newChecker.type == 'blackChecker') {
                 if (((newChecker.currentPosition - 1) % 8) == 0) {
@@ -78,13 +73,26 @@ function GameTable() {
         }
     })
 
-    useEffect(() => {
-        if (currentCheckerUpdatedData.checker) {
-            dispatch(updateGameProcess({
-                currentChecker,
-                currentCheckerUpdatedData,
-            }))
 
+    useEffect(() => {
+
+        if (currentChecker.currentPosition) {
+            let updatedsCheckers = [];
+            checkers.forEach((checker) => {
+                if (checker.currentPosition == currentChecker.currentPosition) {
+                    updatedsCheckers.push({
+                        ...checker,
+                        currentPosition: currentCheckerUpdatedData.nextPosition,
+                        newAllowedMoves: currentCheckerUpdatedData.newAllowedMoves,
+                    })
+                } else {
+                    updatedsCheckers.push(checker)
+                }
+            })
+
+            // console.log("updatedsCheckers", updatedsCheckers)
+
+            dispatch(updateGameProcess(updatedsCheckers))
         }
     }, [dispatch, currentCheckerUpdatedData])
 
@@ -96,47 +104,39 @@ function GameTable() {
 
 
     // Locate Checkers on Table
-    let checkersLocated = []
+    // define checkerLocations
+
     const checkerLocater = (index) => {
-        console.log("checkerLocater")
-        if (checkers.find((checker) => (checker.currentPosition == index)) != undefined) {
-            checkersLocated = []
-            let newChecker = (checkers.find((checker) => (checker.currentPosition == index)))
-            checkersLocated.push(
-                (newChecker.type) == "whiteChecker" ?
-                    <svg key={index} className='checkerIcons whiteIcon'
-                        onClick={() => handleCheckerMove(newChecker, index)}
-                    >
-                        <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
-                    </svg> : (newChecker.type) == "blackChecker" ?
-                        <svg key={index} className='checkerIcons blackIcon'
-                            onClick={() => handleCheckerMove(newChecker, index)}
-                        >
-                            <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
-                        </svg> :
-                        <div className='dummyIcon' onClick={() => handleCheckerMove({
-                            id: index,
-                            type: 'blackChecker',
-                            imageUrl: '/assets/blackStone_on_whiteArea.png',
-                            startingPosition: index,
-                            currentPosition: index,
-                            allowedMoves: [],
-                            isWeak: false,
-                            isForcedToKill: false,
-                            isRemoved: false,
-                            isSuperChecker: false
-                        }, index)}>
-                            test
-                        </div >
-                // <Icon as={BsCircle} key={index} className='checkerIcons whiteIcon' /> :
-                // <Icon as={BsCircleFill} key={index} className='checkerIcons' />
-            )
+
+        let checkersLocated = []
+        let newChecker = checkers.find((checker) => (checker.currentPosition == index))
+
+        if (newChecker) {
+            if (newChecker.type == "whiteChecker") {
+                checkersLocated.push(<svg key={index} className='checkerIcons whiteIcon'
+                    onClick={() => handleCheckerMove(newChecker, index)}
+                >
+                    <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
+                </svg>)
+            } else if (newChecker.type == "blackChecker") {
+                checkersLocated.push(<svg key={index} className='checkerIcons blackIcon'
+                    onClick={() => handleCheckerMove(newChecker, index)}
+                >
+                    <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
+                </svg>)
+            } else if (newChecker.type == 'dummyChecker') {
+                checkersLocated.push(
+                    <div key={index} className='dummyIcon' onClick={() => handleCheckerMove(newChecker, index)}>
+                        test
+                    </div >)
+            }
+            // <Icon as={BsCircle} key={index} className='checkerIcons whiteIcon' /> :
+            // <Icon as={BsCircleFill} key={index} className='checkerIcons' />
             return checkersLocated
         }
     }
 
 
-    console.log("checkerList", checkers)
     return (
         <>
             <SimpleGrid mt={16} columns={8} spacing={0} className='checkersTable' boxShadow='dark-lg' p='6' rounded='md' bg='white'>
