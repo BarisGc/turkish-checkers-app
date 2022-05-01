@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { nanoid } from 'nanoid'
+
+
 // General Settings & Data
-
-
-
 const user1Settings = [{
     color: 'white', // white or black
     isSentOffer: 'no', // newRoundWithLoss, resetRound, resetAllRounds, draw 
@@ -198,23 +197,19 @@ for (let checker of checkers) {
     checker.allowedMoves = allowedMovesDefiner(checker)
 }
 
-
-
-
 export const turkishCheckersSlice = createSlice({
     name: 'turkishCheckers',
     initialState: {
         checkers: checkers,
         table: table,
-        user1Settings,
-        user2Settings,
+        user1Settings: user1Settings,
+        user2Settings: user2Settings,
         gameSettings: gameSettings,
         gameProcess: gameProcess,
     },
     reducers: {
         updateGameProcess: (state, action) => {
             state.checkers = action.payload;
-
         },
     },
     extraReducers: {

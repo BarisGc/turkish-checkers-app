@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch, } from 'react-redux';
-import { updateGameProcess } from '../redux/turkishCheckersSlice'
+import { updateGameProcess, allowedMovesDefiner } from '../redux/turkishCheckersSlice'
 import { SimpleGrid, Box, Icon } from '@chakra-ui/react'
 
 function GameTable() {
@@ -21,7 +21,7 @@ function GameTable() {
     console.log("currentCheckerUpdatedData", currentCheckerUpdatedData)
 
     const handleCheckerMove = ((newChecker, clickedCellNumber) => {
-
+        console.log("handlecheckermovenewchecker", newChecker)
         if (currentChecker == '') {
             setCurrentChecker(newChecker)
         } else if (currentChecker.type == newChecker.type) {
@@ -62,10 +62,16 @@ function GameTable() {
                         newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition - 8]
                     }))
                 }
-            } else {
+            }
+            else if (newChecker.type == 'dummyChecker' && currentChecker.type == 'blackChecker') {
                 setCurrentCheckerUpdatedData(({
                     nextPosition: clickedCellNumber,
-                    newAllowedMoves: []
+                    newAllowedMoves: allowedMovesDefiner({ ...newChecker, type: "blackChecker" })
+                }))
+            } else if (newChecker.type == 'dummyChecker' && currentChecker.type == 'whiteChecker') {
+                setCurrentCheckerUpdatedData(({
+                    nextPosition: clickedCellNumber,
+                    newAllowedMoves: allowedMovesDefiner({ ...newChecker, type: "whiteChecker" })
                 }))
             }
         } else if (currentChecker.currentPosition == newChecker.currentPosition) {
@@ -75,7 +81,6 @@ function GameTable() {
 
 
     useEffect(() => {
-
         if (currentChecker.currentPosition) {
             let updatedsCheckers = [];
             checkers.forEach((checker) => {
@@ -91,21 +96,19 @@ function GameTable() {
             })
 
             // console.log("updatedsCheckers", updatedsCheckers)
-
+            let newCell = checkers.find((checker) => (checker.currentPosition == currentCheckerUpdatedData.nextPosition))
+            allowedMovesDefiner({
+                ...currentChecker,
+                currentPosition: newCell.currentPosition
+            })
             dispatch(updateGameProcess(updatedsCheckers))
+            setCurrentChecker('')
+            console.log("useeffect çalıştı mı?")
         }
     }, [dispatch, currentCheckerUpdatedData])
 
-
-
-
-
-
-
-
     // Locate Checkers on Table
     // define checkerLocations
-
     const checkerLocater = (index) => {
 
         let checkersLocated = []
@@ -135,7 +138,6 @@ function GameTable() {
             return checkersLocated
         }
     }
-
 
     return (
         <>
