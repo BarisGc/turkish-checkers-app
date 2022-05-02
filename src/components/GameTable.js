@@ -11,126 +11,114 @@ function GameTable() {
     console.log("checkerList", checkers)
 
     // LocalStates
-    const [currentChecker, setCurrentChecker] = useState('')
-    const [currentCheckerUpdatedData, setCurrentCheckerUpdatedData] = useState({
-        nextPosition: '',
-        newAllowedMoves: '',
-    })
+    const [currentChecker, setCurrentChecker] = useState('');
+    const [nextChecker, setNextChecker] = useState('');
 
     console.log("currentChecker", currentChecker)
-    console.log("currentCheckerUpdatedData", currentCheckerUpdatedData)
+    console.log("nextChecker", nextChecker)
 
-    const handleCheckerMove = ((newChecker, clickedCellNumber) => {
-        console.log("handlecheckermovenewchecker", newChecker)
+    const handleCheckerMove = ((clickedChecker) => {
+        console.log("handlecheckermove_içindeki_clickedChecker", clickedChecker)
+        // Define Current Checker
+        // 1.0
         if (currentChecker == '') {
-            setCurrentChecker(newChecker)
-        } else if (currentChecker.type == newChecker.type) {
-            setCurrentChecker(newChecker)
-        } else if ((currentChecker.currentPosition != newChecker.currentPosition)) {
-            //Comparison, the newChecker if it is white or black or dummy & Define "newAllowedMoves"
-            if (newChecker.type == 'blackChecker') {
-                if (((newChecker.currentPosition - 1) % 8) == 0) {
-                    setCurrentCheckerUpdatedData({
-                        nextPosition: clickedCellNumber,
-                        newAllowedMoves: [newChecker.currentPosition + 1, newChecker.currentPosition + 8]
-                    })
-                } else if (newChecker.currentPosition % 8 == 0) {
-                    setCurrentCheckerUpdatedData(({
-                        nextPosition: clickedCellNumber,
-                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 8]
-                    }))
-                } else {
-                    setCurrentCheckerUpdatedData(({
-                        nextPosition: clickedCellNumber,
-                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition + 8]
-                    }))
-                }
-            } else if (newChecker.type == 'whiteChecker') {
-                if (((newChecker.currentPosition - 1) % 8) == 0) {
-                    setCurrentCheckerUpdatedData(({
-                        nextPosition: clickedCellNumber,
-                        newAllowedMoves: [newChecker.currentPosition + 1, newChecker.currentPosition - 8]
-                    }))
-                } else if (newChecker.currentPosition % 8 == 0) {
-                    setCurrentCheckerUpdatedData(({
-                        nextPosition: clickedCellNumber,
-                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition - 8]
-                    }))
-                } else {
-                    setCurrentCheckerUpdatedData(({
-                        nextPosition: clickedCellNumber,
-                        newAllowedMoves: [newChecker.currentPosition - 1, newChecker.currentPosition + 1, newChecker.currentPosition - 8]
-                    }))
-                }
+            setCurrentChecker(clickedChecker)
+        }
+        // 2.0
+        else if (currentChecker == '' && clickedChecker.type == 'dummyChecker') {
+            /*  Do Nothing! */
+        }
+        // 3.0
+        else if (currentChecker != '') {
+            // 3.0.0
+            if (clickedChecker.currentPosition == currentChecker.currentPosition) {
+                setCurrentChecker('')
             }
-            else if (newChecker.type == 'dummyChecker' && currentChecker.type == 'blackChecker') {
-                setCurrentCheckerUpdatedData(({
-                    nextPosition: clickedCellNumber,
-                    newAllowedMoves: allowedMovesDefiner({ ...newChecker, type: "blackChecker" })
-                }))
-            } else if (newChecker.type == 'dummyChecker' && currentChecker.type == 'whiteChecker') {
-                setCurrentCheckerUpdatedData(({
-                    nextPosition: clickedCellNumber,
-                    newAllowedMoves: allowedMovesDefiner({ ...newChecker, type: "whiteChecker" })
-                }))
+            // 3.0.1 Checker Moves if it is able to, depended on various situations 
+            else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type != currentChecker.type) {
+                setNextChecker(clickedChecker)
+            } else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == currentChecker.type) {
+                setCurrentChecker(clickedChecker)
             }
-        } else if (currentChecker.currentPosition == newChecker.currentPosition) {
-            setCurrentChecker('')
+            // 3.0.0: Moving one by one
+            // 3.0.1: Killing neighbour & Moving 2 cells once 
+            // else if (checkers.some((checker) => (currentChecker.allowedMoves
+            //     .includes(((checker.type != currentChecker.type) && (checker.type != 'dummyChecker')) ?
+            //         checker.currentPosition : 'not found')
+            // ))) {
+            //     setNextChecker(clickedChecker)
+            // }
+            // else {
+            //     alert("Not Allowed Move!");
+            // }
         }
     })
+
 
 
     useEffect(() => {
-        if (currentChecker.currentPosition) {
-            let updatedsCheckers = [];
+        if (nextChecker.currentPosition) {
+
+            let checkersNewList = [];
+
+            //Swap Between Dummy Checker And Moving Checker
             checkers.forEach((checker) => {
                 if (checker.currentPosition == currentChecker.currentPosition) {
-                    updatedsCheckers.push({
+                    checkersNewList.push({
                         ...checker,
-                        currentPosition: currentCheckerUpdatedData.nextPosition,
-                        newAllowedMoves: currentCheckerUpdatedData.newAllowedMoves,
+                        currentPosition: nextChecker.currentPosition,
+                        allowedMoves: allowedMovesDefiner({
+                            ...currentChecker,
+                            currentPosition: nextChecker.currentPosition
+                        }),
                     })
-                } else {
-                    updatedsCheckers.push(checker)
+                } else if (checker.currentPosition == nextChecker.currentPosition) {
+                    checkersNewList.push({
+                        ...checker,
+                        currentPosition: currentChecker.currentPosition,
+                        allowedMoves: 'dummyChecker',
+                    })
+                }
+                else {
+                    checkersNewList.push(checker)
                 }
             })
 
-            // console.log("updatedsCheckers", updatedsCheckers)
-            let newCell = checkers.find((checker) => (checker.currentPosition == currentCheckerUpdatedData.nextPosition))
-            allowedMovesDefiner({
+            console.log("checkersNewList", checkersNewList)
+            console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
                 ...currentChecker,
-                currentPosition: newCell.currentPosition
-            })
-            dispatch(updateGameProcess(updatedsCheckers))
+                currentPosition: nextChecker.currentPosition
+            }))
+
+            dispatch(updateGameProcess(checkersNewList))
             setCurrentChecker('')
+            setNextChecker('')
             console.log("useeffect çalıştı mı?")
         }
-    }, [dispatch, currentCheckerUpdatedData])
+    }, [dispatch, nextChecker])
 
     // Locate Checkers on Table
     // define checkerLocations
     const checkerLocater = (index) => {
 
         let checkersLocated = []
-        let newChecker = checkers.find((checker) => (checker.currentPosition == index))
-
-        if (newChecker) {
-            if (newChecker.type == "whiteChecker") {
+        let clickedChecker = checkers.find((checker) => (checker.currentPosition == index))
+        if (clickedChecker) {
+            if (clickedChecker.type == "whiteChecker") {
                 checkersLocated.push(<svg key={index} className='checkerIcons whiteIcon'
-                    onClick={() => handleCheckerMove(newChecker, index)}
+                    onClick={() => handleCheckerMove(clickedChecker)}
                 >
                     <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
                 </svg>)
-            } else if (newChecker.type == "blackChecker") {
+            } else if (clickedChecker.type == "blackChecker") {
                 checkersLocated.push(<svg key={index} className='checkerIcons blackIcon'
-                    onClick={() => handleCheckerMove(newChecker, index)}
+                    onClick={() => handleCheckerMove(clickedChecker)}
                 >
                     <circle cx="50%" cy="50%" r="40%" stroke="black" strokeWidth="1" fill="currentColor" />
                 </svg>)
-            } else if (newChecker.type == 'dummyChecker') {
+            } else {
                 checkersLocated.push(
-                    <div key={index} className='dummyIcon' onClick={() => handleCheckerMove(newChecker, index)}>
-                        test
+                    <div key={index + 500} className={`${currentChecker == '' ? 'unClickableDummyIcon' : 'dummyIcon'}`} onClick={() => handleCheckerMove(clickedChecker)}>
                     </div >)
             }
             // <Icon as={BsCircle} key={index} className='checkerIcons whiteIcon' /> :
@@ -145,7 +133,7 @@ function GameTable() {
                 {table.map((area, index) => (
                     <Box key={index} border='1px' borderColor='Gray.900' borderStyle='groove'
                         className={`cell ${area == 'gray' ? 'backgroundGray' : 'backgroundWhite'} 
-                        ${index + 1 == currentChecker.currentPosition ? 'pickedCell' : ''}`} >
+                        ${index + 1 == currentChecker.currentPosition && currentChecker.type != 'dummyChecker' ? 'pickedCell' : ''}`} >
 
                         {checkerLocater(index + 1)}
 

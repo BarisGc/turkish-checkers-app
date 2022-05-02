@@ -35,13 +35,13 @@
     position: absolute;
     text-align: center;
     opacity: 1;
-    z-index: 50;
+    z-index: 80;
     top: 0
 }
 
 .pickedCell {
     outline: #525E75 solid 0.5vh;
-    z-index: 60;
+    z-index: 70;
 }
 
 
@@ -51,6 +51,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 60;
 }
 
 .checkerIcons.whiteIcon {
@@ -65,4 +66,10 @@
 
 .dummyIcon {
     cursor: pointer !important;
+    position: absolute;
+    z-index: 50;
+    width: 50% !important;
+    height: 50% !important;
 }
+
+.unClickableDummyIcon {}
