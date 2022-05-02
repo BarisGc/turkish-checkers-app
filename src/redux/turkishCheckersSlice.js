@@ -27,7 +27,7 @@ const gameSettings = [{
     }
 }];
 const gameProcess = {
-    turnOfUser: 'Player2', // Player1 or Player2
+    turnOfUser: 'player1', // player1 or player2
     checker: {
         isPicked: false,
         data: [],
@@ -173,7 +173,6 @@ for (let i = 1; i < 9; i++) {
 }
 // Preparing Initial "AllowedMoves" of Checkers
 export let allowedMovesDefiner = (checkers, updatedChecker) => {
-    console.log("allowedmovesdefineriçi", checkers, updatedChecker)
     // Black Checkers
     if (updatedChecker.type == 'blackChecker') {
         // Left Edged Checkers Move
@@ -205,7 +204,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
             }
             else {
                 // Move to left or forward 1 cell once
-                return [updatedChecker.currentPosition + 1, updatedChecker.currentPosition + 8]
+                return [updatedChecker.currentPosition - 1, updatedChecker.currentPosition + 8]
             }
         } // Middle Checkers Move
         else {
@@ -216,12 +215,16 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 if ((updatedChecker.currentPosition + 1) % 8 != 0) {
                     middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 2)
                 }
+            } else {
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1)
             }
             // Move to left 2 cells once
             if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))) {
                 if ((updatedChecker.currentPosition - 1) % 8 != 0) {
                     middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 2)
                 }
+            } else {
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 1)
             }
             // Move to forward one cell or 2 cells once
             if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))) {
@@ -231,6 +234,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 } else {
                     middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
                 }
+            } else {
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
             }
 
             return middleCheckerAllowedMovesArray
@@ -268,7 +273,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
             }
             else {
                 // Move to left or forward 1 cell once
-                return [updatedChecker.currentPosition + 1, updatedChecker.currentPosition - 8]
+                return [updatedChecker.currentPosition - 1, updatedChecker.currentPosition - 8]
             }
         } // Middle Checkers Move
         else {
@@ -323,7 +328,9 @@ export const turkishCheckersSlice = createSlice({
     reducers: {
         updateGameProcess: (state, action) => {
             state.checkers = action.payload;
+            state.gameProcess.turnOfUser = state.gameProcess.turnOfUser == 'player1' ? 'player2' : 'player1'
         },
+
     },
     extraReducers: {
     }

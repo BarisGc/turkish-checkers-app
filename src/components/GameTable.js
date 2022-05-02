@@ -8,7 +8,9 @@ function GameTable() {
     //states & Selectors
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
     let table = useSelector((state) => state.turkishCheckers.table);
+    let playerTurn = useSelector((state) => state.turkishCheckers.gameProcess.turnOfUser);
     console.log("checkerList", checkers)
+    console.log("playerTurn", playerTurn)
 
     // LocalStates
     const [currentChecker, setCurrentChecker] = useState('');
@@ -55,16 +57,16 @@ function GameTable() {
     })
 
 
-
     useEffect(() => {
         if (nextChecker.currentPosition) {
 
-            let checkersNewList = [];
+            let checkersNewList1 = [];
 
             //Swap Between Dummy Checker And Moving Checker
             checkers.forEach((checker) => {
                 if (checker.currentPosition == currentChecker.currentPosition) {
-                    checkersNewList.push({
+                    console.log("1.if")
+                    checkersNewList1.push({
                         ...checker,
                         currentPosition: nextChecker.currentPosition,
                         allowedMoves: allowedMovesDefiner(
@@ -77,16 +79,33 @@ function GameTable() {
                             }),
                     })
                 } else if (checker.currentPosition == nextChecker.currentPosition) {
-                    checkersNewList.push({
+                    console.log("2.if")
+
+                    checkersNewList1.push({
                         ...checker,
                         currentPosition: currentChecker.currentPosition,
                         allowedMoves: 'dummyChecker',
                     })
                 }
                 else {
-                    checkersNewList.push(checker)
+                    checkersNewList1.push({
+                        ...checker,
+                    })
                 }
             })
+            console.log("checkersNewList1", checkersNewList1)
+            let checkersNewList2 = []
+            checkersNewList1.forEach((checker) => {
+                checkersNewList2.push({
+                    ...checker,
+                    allowedMoves: allowedMovesDefiner(
+                        //Checkers List
+                        checkers,
+                        //updatedChecker
+                        checker)
+                })
+            })
+            console.log("checkersNewList2", checkersNewList2)
 
             // console.log("checkersNewList", checkersNewList)
             // console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
@@ -94,12 +113,11 @@ function GameTable() {
             //     currentPosition: nextChecker.currentPosition
             // }))
 
-            dispatch(updateGameProcess(checkersNewList))
+            dispatch(updateGameProcess(checkersNewList2))
             setCurrentChecker('')
             setNextChecker('')
-            console.log("useeffect çalıştı mı?")
         }
-    }, [dispatch, nextChecker])
+    }, [checkers, currentChecker, dispatch, nextChecker, playerTurn])
 
     // Locate Checkers on Table
     // define checkerLocations
