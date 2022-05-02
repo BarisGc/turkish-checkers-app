@@ -67,10 +67,14 @@ function GameTable() {
                     checkersNewList.push({
                         ...checker,
                         currentPosition: nextChecker.currentPosition,
-                        allowedMoves: allowedMovesDefiner({
-                            ...currentChecker,
-                            currentPosition: nextChecker.currentPosition
-                        }),
+                        allowedMoves: allowedMovesDefiner(
+                            //Checkers List
+                            checkers,
+                            //updatedChecker
+                            {
+                                ...currentChecker,
+                                currentPosition: nextChecker.currentPosition
+                            }),
                     })
                 } else if (checker.currentPosition == nextChecker.currentPosition) {
                     checkersNewList.push({
@@ -84,11 +88,11 @@ function GameTable() {
                 }
             })
 
-            console.log("checkersNewList", checkersNewList)
-            console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
-                ...currentChecker,
-                currentPosition: nextChecker.currentPosition
-            }))
+            // console.log("checkersNewList", checkersNewList)
+            // console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
+            //     ...currentChecker,
+            //     currentPosition: nextChecker.currentPosition
+            // }))
 
             dispatch(updateGameProcess(checkersNewList))
             setCurrentChecker('')
