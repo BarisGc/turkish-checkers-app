@@ -234,57 +234,52 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
         else {
             // Is New Position is rival checker free? If not, move 2 cells once instead of one cell once!
             let middleCheckerAllowedMovesArray = [];
+
             // Move to right 2 cells once to kill whiteCheckers
-            if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))) {
+            if
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
+                &&
+                checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
                 if ((updatedChecker.currentPosition + 1) % 8 != 0) {
                     middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 2)
                 }
-                console.log("Move to right 2 cells once to kill whiteCheckers")
             }
+            else if
+                // Move to right 1 cell once if the cell is free
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1)
+            }
+
             // Move to left 2 cells once to kill whiteCheckers
-            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))) {
+            if
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
+                &&
+                checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
                 if ((updatedChecker.currentPosition - 1) % 8 != 0) {
                     middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 2)
-                    console.log("Move to left 2 cells once to kill whiteCheckers")
                 }
             }
-            // Move to forward 2 cells once kill whiteCheckers
-            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))) {
-                if ((updatedChecker.currentPosition + 16) % 8 != 0) {
-                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 16)
-                    console.log("Move to forward 2 cells once kill whiteCheckers")
-                }
-            }
-            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (!checker.currentPosition == updatedChecker.currentPosition - 1 && checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
-                // Can not move to right and forward, due to blackChecker neighbor
+            else if
+                // Move to right 1 cell once if the cell is free
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
                 middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 1)
-                console.log("Can not move to right and forward, due to blackChecker neighbor")
             }
-            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && !checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
-                // Can not move to left and forward, due to blackChecker neighbor
-                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1)
-                console.log("Can not move to left and forward, due to blackChecker neighbor")
 
+            // Move to forward 2 cells once kill whiteCheckers
+            if
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                &&
+                checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                &&
+                (updatedChecker.currentPosition + 16) % 8 != 0) {
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 16)
             }
-            else if (checkers.some((checker) => (!checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
-                // Can not move to left or right, due to blackChecker neighbor
-                if ((updatedChecker.currentPosition + 16) % 8 != 0) {
-                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 16)
-                } else {
-                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
-                }
-                console.log("Can not move to left or right, due to blackChecker neighbor")
-
+            // Move to forward 1 cell once if the cell is free
+            else if
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
             }
-            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (!checker.currentPosition == updatedChecker.currentPosition - 1 && !checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
-                // Can not move to forward, due to blackChecker neighbor
-                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1, updatedChecker.currentPosition - 1)
-                console.log("Can not move to forward, due to blackChecker neighbor")
-
-            }
-            console.log("middleCheckerAllowedMovesArray", middleCheckerAllowedMovesArray)
             return middleCheckerAllowedMovesArray
-
         }
     }
     // White Checkers

@@ -81,7 +81,6 @@ function GameTable() {
                 })
             }
         })
-        console.log("checkersNewList1", checkersNewList1)
 
         // Calculate "allowedMoves" for each cheacker
         let checkersNewList2 = []
