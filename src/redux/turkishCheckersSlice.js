@@ -179,12 +179,24 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
         if (((updatedChecker.currentPosition - 1) % 8) == 0) {
             // Is New Position is rival checker free? If not, move 2 cells once instead of one cell once!
             if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))) {
-                // Move to right 2 cells once
+                // Move to right 2 cells once to kill whiteChecker
                 return [updatedChecker.currentPosition + 2]
             }
             else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))) {
-                // Move to Forward 2 cells once
+                // Move to Forward 2 cells once to kill whiteChecker
                 return [updatedChecker.currentPosition + 16]
+            }
+            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to right and forward, due to blackChecker neighbors
+                return []
+            }
+            else if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && !checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to forward, due to blackChecker neighbor
+                return [updatedChecker.currentPosition + 1]
+            }
+            else if (!checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to right, due to blackChecker neighbor
+                return [updatedChecker.currentPosition + 8]
             }
             else {
                 // Move to right or forward 1 cell once

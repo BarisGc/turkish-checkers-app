@@ -42,82 +42,71 @@ function GameTable() {
             } else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == currentChecker.type) {
                 setCurrentChecker(clickedChecker)
             }
-            // 3.0.0: Moving one by one
-            // 3.0.1: Killing neighbour & Moving 2 cells once 
-            // else if (checkers.some((checker) => (currentChecker.allowedMoves
-            //     .includes(((checker.type != currentChecker.type) && (checker.type != 'dummyChecker')) ?
-            //         checker.currentPosition : 'not found')
-            // ))) {
-            //     setNextChecker(clickedChecker)
-            // }
-            // else {
-            //     alert("Not Allowed Move!");
-            // }
         }
     })
 
 
     useEffect(() => {
-        if (nextChecker.currentPosition) {
+        console.log("useeffectif")
+        let checkersNewList1 = [];
 
-            let checkersNewList1 = [];
-
-            //Swap Between Dummy Checker And Moving Checker
-            checkers.forEach((checker) => {
-                if (checker.currentPosition == currentChecker.currentPosition) {
-                    console.log("1.if")
-                    checkersNewList1.push({
-                        ...checker,
-                        currentPosition: nextChecker.currentPosition,
-                        allowedMoves: allowedMovesDefiner(
-                            //Checkers List
-                            checkers,
-                            //updatedChecker
-                            {
-                                ...currentChecker,
-                                currentPosition: nextChecker.currentPosition
-                            }),
-                    })
-                } else if (checker.currentPosition == nextChecker.currentPosition) {
-                    console.log("2.if")
-
-                    checkersNewList1.push({
-                        ...checker,
-                        currentPosition: currentChecker.currentPosition,
-                        allowedMoves: 'dummyChecker',
-                    })
-                }
-                else {
-                    checkersNewList1.push({
-                        ...checker,
-                    })
-                }
-            })
-            console.log("checkersNewList1", checkersNewList1)
-            let checkersNewList2 = []
-            checkersNewList1.forEach((checker) => {
-                checkersNewList2.push({
+        //Swap Between Dummy Checker And Moving Checker
+        checkers.forEach((checker) => {
+            if (checker.currentPosition == currentChecker.currentPosition) {
+                console.log("1.if")
+                checkersNewList1.push({
                     ...checker,
+                    currentPosition: nextChecker.currentPosition,
                     allowedMoves: allowedMovesDefiner(
                         //Checkers List
                         checkers,
                         //updatedChecker
-                        checker)
+                        {
+                            ...currentChecker,
+                            currentPosition: nextChecker.currentPosition
+                        }),
                 })
+            } else if (checker.currentPosition == nextChecker.currentPosition) {
+                console.log("2.if")
+
+                checkersNewList1.push({
+                    ...checker,
+                    currentPosition: currentChecker.currentPosition,
+                    allowedMoves: 'dummyChecker',
+                })
+            }
+            else {
+                checkersNewList1.push({
+                    ...checker,
+                })
+            }
+        })
+        console.log("checkersNewList1", checkersNewList1)
+
+        // Calculate "allowedMoves" for each cheacker
+        let checkersNewList2 = []
+        checkersNewList1.forEach((checker) => {
+            checkersNewList2.push({
+                ...checker,
+                allowedMoves: allowedMovesDefiner(
+                    //Checkers List
+                    checkers,
+                    //updatedChecker
+                    checker)
             })
-            console.log("checkersNewList2", checkersNewList2)
+        })
+        console.log("checkersNewList2", checkersNewList2)
 
-            // console.log("checkersNewList", checkersNewList)
-            // console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
-            //     ...currentChecker,
-            //     currentPosition: nextChecker.currentPosition
-            // }))
+        // console.log("checkersNewList", checkersNewList)
+        // console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
+        //     ...currentChecker,
+        //     currentPosition: nextChecker.currentPosition
+        // }))
 
-            dispatch(updateGameProcess(checkersNewList2))
-            setCurrentChecker('')
-            setNextChecker('')
-        }
-    }, [checkers, currentChecker, dispatch, nextChecker, playerTurn])
+        dispatch(updateGameProcess(checkersNewList2))
+        setCurrentChecker('')
+        setNextChecker('')
+    }, [nextChecker])
 
     // Locate Checkers on Table
     // define checkerLocations
