@@ -48,7 +48,7 @@ function GameTable() {
 
     useEffect(() => {
         let checkersNewList1 = [];
-
+        console.log("next basmadan useeffect geld i mi?")
         //Swap Between Dummy Checker And Moving Checker
         checkers.forEach((checker) => {
             if (checker.currentPosition == currentChecker.currentPosition) {
@@ -79,7 +79,7 @@ function GameTable() {
             }
         })
 
-        // Calculate "allowedMoves" for each cheacker
+        // Calculate "allowedMoves" for each checker
         let checkersNewList2 = []
         checkersNewList1.forEach((checker) => {
             checkersNewList2.push({
