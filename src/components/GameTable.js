@@ -47,13 +47,11 @@ function GameTable() {
 
 
     useEffect(() => {
-        console.log("useeffectif")
         let checkersNewList1 = [];
 
         //Swap Between Dummy Checker And Moving Checker
         checkers.forEach((checker) => {
             if (checker.currentPosition == currentChecker.currentPosition) {
-                console.log("1.if")
                 checkersNewList1.push({
                     ...checker,
                     currentPosition: nextChecker.currentPosition,
@@ -67,7 +65,6 @@ function GameTable() {
                         }),
                 })
             } else if (checker.currentPosition == nextChecker.currentPosition) {
-                console.log("2.if")
 
                 checkersNewList1.push({
                     ...checker,
@@ -94,17 +91,19 @@ function GameTable() {
                     checker)
             })
         })
-        console.log("checkersNewList2", checkersNewList2)
+        if (checkersNewList2 && currentChecker && nextChecker) {
+            if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
+                dispatch(updateGameProcess(checkersNewList2))
+                setCurrentChecker('')
+                setNextChecker('')
+            } else {
+                setCurrentChecker('')
+                setNextChecker('')
+                alert('Not Able To Move')
+            }
+        }
 
-        // console.log("checkersNewList", checkersNewList)
-        // console.log("allowedMovesDefinerÇalışıyor mu?", allowedMovesDefiner({
-        //     ...currentChecker,
-        //     currentPosition: nextChecker.currentPosition
-        // }))
 
-        dispatch(updateGameProcess(checkersNewList2))
-        setCurrentChecker('')
-        setNextChecker('')
     }, [nextChecker])
 
     // Locate Checkers on Table
