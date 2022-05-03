@@ -250,7 +250,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
             } else {
                 middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 1)
             }
-            // Move to forward one cell or 2 cells once
+            // Move to forward one cell or 2 cells once kill whiteCheckers
             if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))) {
 
                 if ((updatedChecker.currentPosition + 16) % 8 != 0) {
@@ -260,6 +260,36 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 }
             } else {
                 middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+            }
+
+
+            if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to forward or left or right, due to blackChecker neighbor
+                return // Do Nothing
+            }
+
+            if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (!checker.currentPosition == updatedChecker.currentPosition - 1 && checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to right and forward, due to blackChecker neighbor
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 1)
+            }
+
+            if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && !checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to left and forward, due to blackChecker neighbor
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1)
+            }
+
+            if (checkers.some((checker) => (!checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to left or right, due to blackChecker neighbor
+                if ((updatedChecker.currentPosition + 16) % 8 != 0) {
+                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 16)
+                } else {
+                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+                }
+            }
+
+            if (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker')) && checkers.some((checker) => (!checker.currentPosition == updatedChecker.currentPosition - 1 && !checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))) {
+                // Can not move to forward, due to blackChecker neighbor
+                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1, updatedChecker.currentPosition - 1)
             }
 
             return middleCheckerAllowedMovesArray
