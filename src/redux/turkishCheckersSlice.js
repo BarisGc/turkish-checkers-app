@@ -232,9 +232,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
             }
         } // Middle Checkers Move
         else {
-            // Is New Position is rival checker free? If not, move 2 cells once instead of one cell once!
+            // Force middle blackCheckers to kill whiteCheckers
             let middleCheckerAllowedMovesArray = [];
-
             // Move to right 2 cells once to kill whiteCheckers
             if
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
@@ -245,13 +244,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 }
             }
             else if
-                // Move to right 1 cell once if the cell is free
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
-                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1)
-            }
-
-            // Move to left 2 cells once to kill whiteCheckers
-            if
+                // Move to left 2 cells once to kill whiteCheckers
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
                 &&
                 checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
@@ -260,13 +253,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 }
             }
             else if
-                // Move to right 1 cell once if the cell is free
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
-                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 1)
-            }
-
-            // Move to forward 2 cells once kill whiteCheckers
-            if
+                // Move to forward 2 cells once kill whiteCheckers
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
                 &&
                 checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
@@ -274,11 +261,25 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 (updatedChecker.currentPosition + 16) % 8 != 0) {
                 middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 16)
             }
-            // Move to forward 1 cell once if the cell is free
-            else if
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
-                middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+            // Move to free cells if the checker is not forced to kill rival checker
+            else {
+                // Move to right 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
+                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 1)
+                }
+                // Move to right 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
+                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition - 1)
+                }
+                // Move to forward 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
+                    middleCheckerAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+                }
             }
+
             return middleCheckerAllowedMovesArray
         }
     }
