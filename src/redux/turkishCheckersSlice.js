@@ -342,7 +342,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 }
                 // Move to right 1 cell once if the cell is free
                 if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
                     middleCheckersAllowedArray.push(updatedChecker.currentPosition + 1)
                 }
                 // Move to forward 1 cell once if the cell is free
@@ -523,7 +523,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 }
                 // Move to right 1 cell once if the cell is free
                 if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
                     middleCheckersAllowedArray.push(updatedChecker.currentPosition + 1)
                 }
                 // Move to forward 1 cell once if the cell is free

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch, } from 'react-redux';
 import { updateCheckers, updateTurnOfUser, allowedMovesDefiner } from '../redux/turkishCheckersSlice'
-import { SimpleGrid, Box, Icon } from '@chakra-ui/react'
+import { SimpleGrid, Box } from '@chakra-ui/react'
 
 function GameTable() {
     const dispatch = useDispatch();
@@ -20,27 +20,77 @@ function GameTable() {
     console.log("nextChecker", nextChecker)
 
     const handleCheckerMove = ((clickedChecker) => {
-        console.log("handlecheckermove_içindeki_clickedChecker", clickedChecker)
-        // Define Current Checker
-        // 1.0
-        if (currentChecker == '') {
-            setCurrentChecker(clickedChecker)
-        }
-        // 2.0
-        else if (currentChecker == '' && clickedChecker.type == 'dummyChecker') {
-            /*  Do Nothing! */
-        }
-        // 3.0
-        else if (currentChecker != '') {
-            // 3.0.0
-            if (clickedChecker.currentPosition == currentChecker.currentPosition) {
-                setCurrentChecker('')
+        if (playerTurn == 'player1') {
+            // Define Current Checker
+            // 1.0
+            if (currentChecker == '' && clickedChecker.type == 'blackChecker') {
+                alert("This is player1's turn")
             }
-            // 3.0.1 Checker Moves if it is able to, depended on various situations 
-            else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type != currentChecker.type) {
-                setNextChecker(clickedChecker)
-            } else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == currentChecker.type) {
+            else if (currentChecker == '' && clickedChecker.type == 'whiteChecker') {
                 setCurrentChecker(clickedChecker)
+            }
+            // 2.0
+            else if (currentChecker == '' && clickedChecker.type == 'dummyChecker') {
+                /*  Do Nothing! */
+            }
+            // 3.0
+            else if (currentChecker != '') {
+                // 3.0.0
+                if (clickedChecker.currentPosition == currentChecker.currentPosition) {
+                    setCurrentChecker('')
+                }
+                // 3.0.1 Checker Moves if it is able to, depended on various situations 
+
+                // "player1" is forced to kill rival checker
+                else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'dummyChecker') {
+                    if (checkers.some((checker) =>
+                        (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')
+                        ||
+                        (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'blackChecker')
+                        ||
+                        (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')
+                    )) {
+                        if (currentChecker.allowedMoves.includes(clickedChecker.currentPosition)) {
+                            setNextChecker(clickedChecker)
+                        } else {
+                            alert('You Have to Kill Rival Checker')
+                        }
+                    } else {
+                        setNextChecker(clickedChecker)
+                    }
+                }
+
+                // "player1" is picked another owned checker 
+                else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'whiteChecker') {
+                    setCurrentChecker(clickedChecker)
+                }
+            }
+        }
+        else if (playerTurn == 'player2') {
+            // Define Current Checker
+            // 1.0
+            if (currentChecker == '' && clickedChecker.type == 'whiteChecker') {
+                alert("This is player2's turn")
+            }
+            else if (currentChecker == '' && clickedChecker.type == 'blackChecker') {
+                setCurrentChecker(clickedChecker)
+            }
+            // 2.0
+            else if (currentChecker == '' && clickedChecker.type == 'dummyChecker') {
+                /*  Do Nothing! */
+            }
+            // 3.0
+            else if (currentChecker != '') {
+                // 3.0.0
+                if (clickedChecker.currentPosition == currentChecker.currentPosition) {
+                    setCurrentChecker('')
+                }
+                // 3.0.1 Checker Moves if it is able to, depended on various situations 
+                else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'dummyChecker') {
+                    setNextChecker(clickedChecker)
+                } else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'blackChecker') {
+                    setCurrentChecker(clickedChecker)
+                }
             }
         }
     })
@@ -80,8 +130,8 @@ function GameTable() {
         })
         console.log("checkersNewList1", checkersNewList1)
 
+        // Calculate "allowedMoves" again for each checker
         if (checkersNewList1 && currentChecker && nextChecker) {
-            // Calculate "allowedMoves" for each checker
             let checkersNewList2 = []
             checkersNewList1.forEach((checker) => {
                 checkersNewList2.push({
@@ -94,6 +144,7 @@ function GameTable() {
                 })
             })
             console.log("useeffect current ve next checker var ise", checkersNewList2)
+            // comparison: nextChecker vs currentChecker.allowedMoves 
             if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
                 dispatch(updateCheckers(checkersNewList2))
                 dispatch(updateTurnOfUser(playerTurn))
@@ -104,7 +155,9 @@ function GameTable() {
                 setNextChecker('')
                 alert('Not Able To Move')
             }
-        } else if (checkersNewList1) {
+        }
+        // Calculate "allowedMoves" again for each checker
+        else if (checkersNewList1) {
             let checkersNewList2 = []
             checkersNewList1.forEach((checker) => {
                 checkersNewList2.push({
@@ -117,10 +170,8 @@ function GameTable() {
                 })
             })
             dispatch(updateCheckers(checkersNewList2))
-
             console.log("useeffect current ve next checker yok ise", checkersNewList2)
         }
-
 
     }, [nextChecker])
 
