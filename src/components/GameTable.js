@@ -9,7 +9,7 @@ function GameTable() {
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
     let table = useSelector((state) => state.turkishCheckers.table);
     let playerTurn = useSelector((state) => state.turkishCheckers.gameProcess.turnOfUser);
-    console.log("checkerList", checkers)
+    // console.log("checkerList", checkers)
     console.log("playerTurn", playerTurn)
 
     // LocalStates
@@ -78,20 +78,22 @@ function GameTable() {
                 })
             }
         })
+        console.log("checkersNewList1", checkersNewList1)
 
-        // Calculate "allowedMoves" for each checker
-        let checkersNewList2 = []
-        checkersNewList1.forEach((checker) => {
-            checkersNewList2.push({
-                ...checker,
-                allowedMoves: allowedMovesDefiner(
-                    //Checkers List
-                    checkers,
-                    //updatedChecker
-                    checker)
+        if (checkersNewList1 && currentChecker && nextChecker) {
+            // Calculate "allowedMoves" for each checker
+            let checkersNewList2 = []
+            checkersNewList1.forEach((checker) => {
+                checkersNewList2.push({
+                    ...checker,
+                    allowedMoves: allowedMovesDefiner(
+                        //Checkers List
+                        checkers,
+                        //updatedChecker
+                        checker)
+                })
             })
-        })
-        if (checkersNewList2 && currentChecker && nextChecker) {
+            console.log("useeffect current ve next checker var ise", checkersNewList2)
             if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
                 dispatch(updateGameProcess(checkersNewList2))
                 setCurrentChecker('')
@@ -101,6 +103,20 @@ function GameTable() {
                 setNextChecker('')
                 alert('Not Able To Move')
             }
+        } else if (checkersNewList1) {
+            let checkersNewList2 = []
+            checkersNewList1.forEach((checker) => {
+                checkersNewList2.push({
+                    ...checker,
+                    allowedMoves: allowedMovesDefiner(
+                        //Checkers List
+                        checkers,
+                        //updatedChecker
+                        checker)
+                })
+            })
+            dispatch(updateGameProcess(checkersNewList2))
+            console.log("useeffect current ve next checker yok ise", checkersNewList2)
         }
 
 
