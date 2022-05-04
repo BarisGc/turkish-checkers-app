@@ -474,11 +474,11 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 )
                 ||
                 (
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'blackChecker'))
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 8 && checker.type == 'blackChecker'))
                     &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 16 && checker.type == 'dummyChecker'))
                     &&
-                    (updatedChecker.currentPosition + 16) < 65
+                    (updatedChecker.currentPosition - 16) > 0
                 )
                 ||
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))
@@ -511,7 +511,7 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 16 && checker.type == 'dummyChecker'))
                     &&
                     (updatedChecker.currentPosition - 16) > 0) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition + 16)
+                    middleCheckersAllowedArray.push(updatedChecker.currentPosition - 16)
                 }
             }
             // Move to free cells if the checker is not forced to kill rival checker
@@ -556,8 +556,10 @@ export const turkishCheckersSlice = createSlice({
         gameProcess: gameProcess,
     },
     reducers: {
-        updateGameProcess: (state, action) => {
+        updateCheckers: (state, action) => {
             state.checkers = action.payload;
+        },
+        updateTurnOfUser: (state, action) => {
             state.gameProcess.turnOfUser = state.gameProcess.turnOfUser == 'player1' ? 'player2' : 'player1'
         },
 
@@ -566,5 +568,5 @@ export const turkishCheckersSlice = createSlice({
     }
 });
 
-export const { updateGameProcess } = turkishCheckersSlice.actions;
+export const { updateCheckers, updateTurnOfUser } = turkishCheckersSlice.actions;
 export default turkishCheckersSlice.reducer;

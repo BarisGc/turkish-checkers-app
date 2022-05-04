@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch, } from 'react-redux';
-import { updateGameProcess, allowedMovesDefiner } from '../redux/turkishCheckersSlice'
+import { updateCheckers, updateTurnOfUser, allowedMovesDefiner } from '../redux/turkishCheckersSlice'
 import { SimpleGrid, Box, Icon } from '@chakra-ui/react'
 
 function GameTable() {
@@ -95,7 +95,8 @@ function GameTable() {
             })
             console.log("useeffect current ve next checker var ise", checkersNewList2)
             if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
-                dispatch(updateGameProcess(checkersNewList2))
+                dispatch(updateCheckers(checkersNewList2))
+                dispatch(updateTurnOfUser(playerTurn))
                 setCurrentChecker('')
                 setNextChecker('')
             } else {
@@ -115,7 +116,8 @@ function GameTable() {
                         checker)
                 })
             })
-            dispatch(updateGameProcess(checkersNewList2))
+            dispatch(updateCheckers(checkersNewList2))
+
             console.log("useeffect current ve next checker yok ise", checkersNewList2)
         }
 
