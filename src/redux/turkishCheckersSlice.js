@@ -173,193 +173,15 @@ for (let i = 1; i < 9; i++) {
 }
 // Preparing Initial "AllowedMoves" of Checkers
 export let allowedMovesDefiner = (checkers, updatedChecker) => {
-    // Black Checkers
-    if (updatedChecker.type == 'blackChecker') {
-        // Left Edged Checkers Move
-        if (((updatedChecker.currentPosition - 1) % 8) == 0) {
-            // Force left edged blackCheckers to kill whiteCheckers
-            let leftEdgedCheckersAllowedArray = [];
-            if
-                (
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))
-                )
-                ||
-                (
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
-                    &&
-                    (updatedChecker.currentPosition + 16) < 65
-                )
-            ) {
-                if
-                    // Move to right 2 cells once to kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
-                    if ((updatedChecker.currentPosition - 1) % 8 != 0) {
-                        leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 2)
-                    }
-                }
-                if
-                    // Move to forward 2 cells once kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
-                    &&
-                    (updatedChecker.currentPosition + 16) < 65) {
-                    leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 16)
-                }
-            }
-            // Move to free cells if the checker is not forced to kill rival checker
-            else {
-                // Move to right 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
-                    leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 1)
-                }
-                // Move to forward 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
-                    leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 8)
-                }
-            }
-            return leftEdgedCheckersAllowedArray
-        }
-        // Right Edged Checkers Move
-        else if (((updatedChecker.currentPosition) % 8) == 0) {
-            // Force right edged blackCheckers to kill whiteCheckers
-            let rightEdgedCheckersAllowedArray = [];
-            if
-                (
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))
-                )
-                ||
-                (
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
-                    &&
-                    (updatedChecker.currentPosition + 16) < 65
-                )
-            ) {
-                if
-                    // Move to left 2 cells once to kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
-                    if ((updatedChecker.currentPosition - 1) % 8 != 0) {
-                        rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 2)
-                    }
-                }
-                if
-                    // Move to forward 2 cells once kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
-                    &&
-                    (updatedChecker.currentPosition + 16) < 65) {
-                    rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 16)
-                }
-            }
-            // Move to free cells if the checker is not forced to kill rival checker
-            else {
-                // Move to left 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
-                    rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 1)
-                }
-                // Move to forward 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
-                    rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 8)
-                }
-            }
-            return rightEdgedCheckersAllowedArray
-        }
-        // Middle Checkers Move
-        else {
-            // Force middle blackCheckers to kill whiteCheckers
-            let middleCheckersAllowedArray = [];
-            if
-                (
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))
-                )
-                ||
-                (
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
-                    &&
-                    (updatedChecker.currentPosition + 16) < 65
-                )
-                ||
-                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))
-                )
-            ) {
-                if
-                    // Move to left 2 cells once to kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
-                    if ((updatedChecker.currentPosition - 1) % 8 != 0) {
-                        middleCheckersAllowedArray.push(updatedChecker.currentPosition - 2)
-                    }
-                }
-                if
-                    // Move to right 2 cells once to kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
-                    if ((updatedChecker.currentPosition + 1) % 8 != 0) {
-                        middleCheckersAllowedArray.push(updatedChecker.currentPosition + 2)
-                    }
-                }
-                if
-                    // Move to forward 2 cells once kill whiteCheckers
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
-                    &&
-                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
-                    &&
-                    (updatedChecker.currentPosition + 16) < 65) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition + 16)
-                }
-            }
-            // Move to free cells if the checker is not forced to kill rival checker
-            else {
-                // Move to left 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition - 1)
-                }
-                // Move to right 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition + 1)
-                }
-                // Move to forward 1 cell once if the cell is free
-                if
-                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition + 8)
-                }
-            }
-            return middleCheckersAllowedArray
-        }
-    }
     // White Checkers
     if (updatedChecker.type == 'whiteChecker') {
         // Left Edged Checkers Move
         if (((updatedChecker.currentPosition - 1) % 8) == 0) {
             // Force left edged whiteCheckers to kill blackCheckers
-            let leftEdgedCheckersAllowedArray = [];
+            let checkersProperties = {
+                checkersAllowedMovesArray: [],
+                checkersForcedMovesArray: [],
+            }
             if
                 (
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'blackChecker'))
@@ -381,7 +203,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     &&
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
                     if ((updatedChecker.currentPosition - 1) % 8 != 0) {
-                        leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 2)
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 2)
                     }
                 }
                 if
@@ -391,7 +214,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 16 && checker.type == 'dummyChecker'))
                     &&
                     (updatedChecker.currentPosition - 16) > 0) {
-                    leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 16)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 16)
+                    checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 16)
                 }
             }
             // Move to free cells if the checker is not forced to kill rival checker
@@ -399,20 +223,25 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 // Move to right 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
-                    leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition + 1)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 1)
                 }
                 // Move to forward 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 8 && checker.type == 'dummyChecker'))) {
-                    leftEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 8)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 8)
                 }
+
             }
-            return leftEdgedCheckersAllowedArray
+
+            return checkersProperties
         }
         // Right Edged Checkers Move
         else if (((updatedChecker.currentPosition) % 8) == 0) {
             // Force right edged whiteCheckers to kill blackCheckers
-            let rightEdgedCheckersAllowedArray = [];
+            let checkersProperties = {
+                checkersAllowedMovesArray: [],
+                checkersForcedMovesArray: [],
+            }
             if
                 (
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'blackChecker'))
@@ -434,7 +263,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     &&
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
                     if ((updatedChecker.currentPosition - 1) % 8 != 0) {
-                        rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 2)
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 2)
                     }
                 }
                 if
@@ -444,7 +274,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 16 && checker.type == 'dummyChecker'))
                     &&
                     (updatedChecker.currentPosition - 16) > 0) {
-                    rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 16)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 16)
+                    checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 16)
                 }
             }
             // Move to free cells if the checker is not forced to kill rival checker
@@ -452,20 +283,25 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 // Move to left 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
-                    rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 1)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 1)
                 }
                 // Move to forward 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 8 && checker.type == 'dummyChecker'))) {
-                    rightEdgedCheckersAllowedArray.push(updatedChecker.currentPosition - 8)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 8)
                 }
+
             }
-            return rightEdgedCheckersAllowedArray
+
+            return checkersProperties
         }
         // Middle Checkers Move
         else {
             // Force middle whiteCheckers to kill blackCheckers
-            let middleCheckersAllowedArray = [];
+            let checkersProperties = {
+                checkersAllowedMovesArray: [],
+                checkersForcedMovesArray: [],
+            }
             if
                 (
                 (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'blackChecker'))
@@ -492,7 +328,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     &&
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
                     if ((updatedChecker.currentPosition - 1) % 8 != 0) {
-                        middleCheckersAllowedArray.push(updatedChecker.currentPosition - 2)
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 2)
                     }
                 }
                 if
@@ -501,7 +338,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     &&
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
                     if ((updatedChecker.currentPosition + 1) % 8 != 0) {
-                        middleCheckersAllowedArray.push(updatedChecker.currentPosition + 2)
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 2)
                     }
                 }
                 if
@@ -511,7 +349,8 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                     checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 16 && checker.type == 'dummyChecker'))
                     &&
                     (updatedChecker.currentPosition - 16) > 0) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition - 16)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 16)
+                    checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 16)
                 }
             }
             // Move to free cells if the checker is not forced to kill rival checker
@@ -519,31 +358,242 @@ export let allowedMovesDefiner = (checkers, updatedChecker) => {
                 // Move to left 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition - 1)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 1)
                 }
                 // Move to right 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition + 1)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 1)
                 }
                 // Move to forward 1 cell once if the cell is free
                 if
                     (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 8 && checker.type == 'dummyChecker'))) {
-                    middleCheckersAllowedArray.push(updatedChecker.currentPosition - 8)
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 8)
+                }
+
+            }
+            return checkersProperties
+        }
+    }
+    // Black Checkers
+    else if (updatedChecker.type == 'blackChecker') {
+        // Left Edged Checkers Move
+        if (((updatedChecker.currentPosition - 1) % 8) == 0) {
+            // Force left edged blackCheckers to kill whiteCheckers
+            let checkersProperties = {
+                checkersAllowedMovesArray: [],
+                checkersForcedMovesArray: [],
+            }
+            if
+                (
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))
+                )
+                ||
+                (
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    &&
+                    (updatedChecker.currentPosition + 16) < 65
+                )
+            ) {
+                if
+                    // Move to right 2 cells once to kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
+                    if ((updatedChecker.currentPosition - 1) % 8 != 0) {
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 2)
+                    }
+                }
+                if
+                    // Move to forward 2 cells once kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    &&
+                    (updatedChecker.currentPosition + 16) < 65) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 16)
+                    checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 16)
                 }
             }
-            return middleCheckersAllowedArray
+            // Move to free cells if the checker is not forced to kill rival checker
+            else {
+                // Move to right 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 1)
+                }
+                // Move to forward 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+                }
+
+            }
+
+            return checkersProperties
+        }
+        // Right Edged Checkers Move
+        else if (((updatedChecker.currentPosition) % 8) == 0) {
+            // Force right edged blackCheckers to kill whiteCheckers
+            let checkersProperties = {
+                checkersAllowedMovesArray: [],
+                checkersForcedMovesArray: [],
+            }
+            if
+                (
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))
+                )
+                ||
+                (
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    &&
+                    (updatedChecker.currentPosition + 16) < 65
+                )
+            ) {
+                if
+                    // Move to left 2 cells once to kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
+                    if ((updatedChecker.currentPosition - 1) % 8 != 0) {
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 2)
+                    }
+                }
+                if
+                    // Move to forward 2 cells once kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    &&
+                    (updatedChecker.currentPosition + 16) < 65) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 16)
+                    checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 16)
+                }
+            }
+            // Move to free cells if the checker is not forced to kill rival checker
+            else {
+                // Move to left 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 1)
+                }
+                // Move to forward 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+                }
+
+            }
+
+            return checkersProperties
+        }
+        // Middle Checkers Move
+        else {
+            // Force middle blackCheckers to kill whiteCheckers
+            let checkersProperties = {
+                checkersAllowedMovesArray: [],
+                checkersForcedMovesArray: [],
+            }
+            if
+                (
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))
+                )
+                ||
+                (
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    &&
+                    (updatedChecker.currentPosition + 16) < 65
+                )
+                ||
+                (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))
+                )
+            ) {
+                if
+                    // Move to left 2 cells once to kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 2 && checker.type == 'dummyChecker'))) {
+                    if ((updatedChecker.currentPosition - 1) % 8 != 0) {
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition - 2)
+                    }
+                }
+                if
+                    // Move to right 2 cells once to kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 2 && checker.type == 'dummyChecker'))) {
+                    if ((updatedChecker.currentPosition + 1) % 8 != 0) {
+                        checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 2)
+                        checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 2)
+                    }
+                }
+                if
+                    // Move to forward 2 cells once kill whiteCheckers
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'whiteChecker'))
+                    &&
+                    checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 16 && checker.type == 'dummyChecker'))
+                    &&
+                    (updatedChecker.currentPosition + 16) < 65) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 16)
+                    checkersProperties.checkersForcedMovesArray.push(updatedChecker.currentPosition + 16)
+                }
+            }
+            // Move to free cells if the checker is not forced to kill rival checker
+            else {
+                // Move to left 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition - 1 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition - 1)
+                }
+                // Move to right 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 1 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 1)
+                }
+                // Move to forward 1 cell once if the cell is free
+                if
+                    (checkers.some((checker) => (checker.currentPosition == updatedChecker.currentPosition + 8 && checker.type == 'dummyChecker'))) {
+                    checkersProperties.checkersAllowedMovesArray.push(updatedChecker.currentPosition + 8)
+                }
+
+            }
+
+            return checkersProperties
         }
     }
     // Dummy Checkers
     else {
-        return ['dummyChecker']
+        let checkersProperties = {
+            checkersAllowedMovesArray: [],
+            checkersForcedMovesArray: [],
+        }
+
+        return checkersProperties
     }
+
+}
+for (let checker of checkers) {
+    checker.allowedMoves = allowedMovesDefiner(checkers, checker).checkersAllowedMovesArray
+    checker.isForcedToKill = allowedMovesDefiner(checkers, checker).checkersForcedMovesArray
 }
 
-for (let checker of checkers) {
-    checker.allowedMoves = allowedMovesDefiner(checkers, checker)
-}
 // turkishCheckersSlice
 export const turkishCheckersSlice = createSlice({
     name: 'turkishCheckers',

@@ -9,7 +9,7 @@ function GameTable() {
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
     let table = useSelector((state) => state.turkishCheckers.table);
     let playerTurn = useSelector((state) => state.turkishCheckers.gameProcess.turnOfUser);
-    // console.log("checkerList", checkers)
+    console.log("checkerList", checkers)
     console.log("playerTurn", playerTurn)
 
     // LocalStates
@@ -98,13 +98,13 @@ function GameTable() {
 
     useEffect(() => {
         let checkersNewList1 = [];
-        console.log("next basmadan useeffect geld i mi?")
         //Swap Between Dummy Checker And Moving Checker
         checkers.forEach((checker) => {
             if (checker.currentPosition == currentChecker.currentPosition) {
                 checkersNewList1.push({
                     ...checker,
                     currentPosition: nextChecker.currentPosition,
+                    //allowedmoves burada gerke olmayabilir?
                     allowedMoves: allowedMovesDefiner(
                         //Checkers List
                         checkers,
@@ -112,7 +112,7 @@ function GameTable() {
                         {
                             ...currentChecker,
                             currentPosition: nextChecker.currentPosition
-                        }),
+                        }).checkersAllowedMovesArray,
                 })
             } else if (checker.currentPosition == nextChecker.currentPosition) {
 
@@ -140,10 +140,14 @@ function GameTable() {
                         //Checkers List
                         checkers,
                         //updatedChecker
-                        checker)
+                        checker).checkersAllowedMovesArray,
+                    isForcedToKill: allowedMovesDefiner(
+                        //Checkers List
+                        checkers,
+                        //updatedChecker
+                        checker).checkersForcedMovesArray
                 })
             })
-            console.log("useeffect current ve next checker var ise", checkersNewList2)
             // comparison: nextChecker vs currentChecker.allowedMoves 
             if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
                 dispatch(updateCheckers(checkersNewList2))
@@ -166,11 +170,15 @@ function GameTable() {
                         //Checkers List
                         checkers,
                         //updatedChecker
-                        checker)
+                        checker).checkersAllowedMovesArray,
+                    isForcedToKill: allowedMovesDefiner(
+                        //Checkers List
+                        checkers,
+                        //updatedChecker
+                        checker).checkersForcedMovesArray
                 })
             })
             dispatch(updateCheckers(checkersNewList2))
-            console.log("useeffect current ve next checker yok ise", checkersNewList2)
         }
 
     }, [nextChecker])
