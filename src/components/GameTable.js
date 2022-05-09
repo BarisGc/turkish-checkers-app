@@ -43,15 +43,42 @@ function GameTable() {
 
                 // "player1" is forced to kill rival checker
                 else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'dummyChecker') {
-                    if (checkers.some((checker) =>
-                        (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')
-                        ||
-                        (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'blackChecker')
-                        ||
-                        (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')
-                    )) {
-                        if (currentChecker.allowedMoves.includes(clickedChecker.currentPosition)) {
+                    if (checkers.find((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker')) != undefined) {
+
+                        let forcedMoves = checkers.map((checker) => {
+                            if (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker') {
+                                return checker.isForcedToKill[0]
+                            }
+                        })
+                        console.log("forcedMoves", forcedMoves)
+                        if
+                            (
+                            (forcedMoves.includes(clickedChecker.currentPosition)
+                            )
+                            &&
+                            (
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'blackChecker')))
+                                ||
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')))
+                                ||
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')))
+                            )
+                        ) {
                             setNextChecker(clickedChecker)
+                            const removeForcedCheckers = []
+                            checkers.forEach(checker => {
+                                if (checker.isForcedToKill[0] == clickedChecker.currentPosition) {
+                                    removeForcedCheckers.push({
+                                        ...checker,
+                                        isForcedToKill: []
+                                    })
+                                } else {
+                                    removeForcedCheckers.push({
+                                        ...checker,
+                                    })
+                                }
+                            });
+                            dispatch(updateCheckers(removeForcedCheckers))
                         } else {
                             alert('You Have to Kill Rival Checker')
                         }
@@ -86,9 +113,55 @@ function GameTable() {
                     setCurrentChecker('')
                 }
                 // 3.0.1 Checker Moves if it is able to, depended on various situations 
+
+                // "player2" is forced to kill rival checker
                 else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'dummyChecker') {
-                    setNextChecker(clickedChecker)
-                } else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'blackChecker') {
+                    if (checkers.find((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker')) != undefined) {
+
+                        let forcedMoves = checkers.map((checker) => {
+                            if (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker') {
+                                return checker.isForcedToKill[0]
+                            }
+                        })
+                        console.log("forcedMoves", forcedMoves)
+                        if
+                            (
+                            (forcedMoves.includes(clickedChecker.currentPosition)
+                            )
+                            &&
+                            (
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'whiteChecker')))
+                                ||
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'whiteChecker')))
+                                ||
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 8 && checker.type == 'whiteChecker')))
+                            )
+                        ) {
+                            setNextChecker(clickedChecker)
+                            const removeForcedCheckers = []
+                            checkers.forEach(checker => {
+                                if (checker.isForcedToKill[0] == clickedChecker.currentPosition) {
+                                    removeForcedCheckers.push({
+                                        ...checker,
+                                        isForcedToKill: []
+                                    })
+                                } else {
+                                    removeForcedCheckers.push({
+                                        ...checker,
+                                    })
+                                }
+                            });
+                            dispatch(updateCheckers(removeForcedCheckers))
+                        } else {
+                            alert('You Have to Kill Rival Checker')
+                        }
+                    } else {
+                        setNextChecker(clickedChecker)
+                    }
+                }
+
+                // "player2" is picked another owned checker 
+                else if (clickedChecker.currentPosition != currentChecker.currentPosition && clickedChecker.type == 'blackChecker') {
                     setCurrentChecker(clickedChecker)
                 }
             }
