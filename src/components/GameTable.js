@@ -9,6 +9,8 @@ function GameTable() {
     let checkers = useSelector((state) => state.turkishCheckers.checkers);
     let table = useSelector((state) => state.turkishCheckers.table);
     let playerTurn = useSelector((state) => state.turkishCheckers.gameProcess.turnOfUser);
+    let numberOfWhiteCheckers = useSelector((state) => state.turkishCheckers.gameProcess.numberOfWhiteCheckers);
+    let numberOfBlackCheckers = useSelector((state) => state.turkishCheckers.gameProcess.numberOfBlackCheckers);
     // console.log("checkerList", checkers)
     console.log("playerTurn", playerTurn)
 
@@ -58,12 +60,15 @@ function GameTable() {
                             &&
                             (
                                 (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'blackChecker')))
-                                ||
-                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')))
-                                ||
-                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')))
                             )
+                            &&
+                            (
+                                currentChecker.currentPosition - 2 == clickedChecker.currentPosition
+                            )
+
                         ) {
+
+                            console.log("sol komşu")
                             setNextChecker(clickedChecker)
                             // Remove Forced Moves
                             const removeForcedMoves = []
@@ -81,15 +86,10 @@ function GameTable() {
                             });
                             // Clear Killed Checker
                             let leftNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'blackChecker')))
-                            let rightNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')))
-                            let forwardNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')))
-                            console.log("removeForcedMoves", removeForcedMoves)
 
                             let clearedCheckers = []
                             removeForcedMoves.forEach((checker) => {
                                 console.log("leftNeighbour", leftNeighbour)
-                                console.log("rightNeighbour", rightNeighbour)
-                                console.log("forwardNeighbour", forwardNeighbour)
                                 console.log("clearedCheckers", clearedCheckers)
 
                                 if (leftNeighbour) {
@@ -102,6 +102,43 @@ function GameTable() {
                                         clearedCheckers.push(checker)
                                     }
                                 }
+                            })
+                            dispatch(updateCheckers(clearedCheckers))
+                        } else if
+                            (
+                            (forcedMoves.includes(clickedChecker.currentPosition)
+                            )
+                            &&
+                            (
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')))
+                            )
+                            &&
+                            (
+                                currentChecker.currentPosition + 2 == clickedChecker.currentPosition
+                            )
+                        ) {
+                            console.log("sağ komşu")
+
+                            setNextChecker(clickedChecker)
+                            // Remove Forced Moves
+                            const removeForcedMoves = []
+                            checkers.forEach(checker => {
+                                if (checker.isForcedToKill[0] == clickedChecker.currentPosition) {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                        isForcedToKill: []
+                                    })
+                                } else {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                    })
+                                }
+                            });
+                            // Clear Killed Checker
+                            let rightNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'blackChecker')))
+                            let clearedCheckers = []
+                            removeForcedMoves.forEach((checker) => {
+                                console.log("rightNeighbour", rightNeighbour)
                                 if (rightNeighbour) {
                                     if (rightNeighbour.currentPosition == checker.currentPosition) {
                                         clearedCheckers.push({
@@ -112,6 +149,47 @@ function GameTable() {
                                         clearedCheckers.push(checker)
                                     }
                                 }
+                            })
+                            console.log("clearedCheckers", clearedCheckers)
+                            dispatch(updateCheckers(clearedCheckers))
+                        } else if
+                            (
+                            (forcedMoves.includes(clickedChecker.currentPosition)
+                            )
+                            &&
+                            (
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')))
+                            )
+                            &&
+                            (
+                                currentChecker.currentPosition - 16 == clickedChecker.currentPosition
+                            )
+                        ) {
+                            console.log("ileri komşu")
+
+                            setNextChecker(clickedChecker)
+                            // Remove Forced Moves
+                            const removeForcedMoves = []
+                            checkers.forEach(checker => {
+                                if (checker.isForcedToKill[0] == clickedChecker.currentPosition) {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                        isForcedToKill: []
+                                    })
+                                } else {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                    })
+                                }
+                            });
+                            // Clear Killed Checker
+                            let forwardNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition - 8 && checker.type == 'blackChecker')))
+                            console.log("removeForcedMoves", removeForcedMoves)
+
+                            let clearedCheckers = []
+                            removeForcedMoves.forEach((checker) => {
+                                console.log("forwardNeighbour", forwardNeighbour)
+                                console.log("clearedCheckers", clearedCheckers)
                                 if (forwardNeighbour) {
                                     if (forwardNeighbour.currentPosition == checker.currentPosition) {
                                         clearedCheckers.push({
@@ -124,9 +202,9 @@ function GameTable() {
                                 }
 
                             })
-                            console.log("clearedCheckers", clearedCheckers)
                             dispatch(updateCheckers(clearedCheckers))
-                        } else {
+                        }
+                        else {
                             alert('You Have to Kill Rival Checker')
                         }
                     } else {
@@ -178,12 +256,15 @@ function GameTable() {
                             &&
                             (
                                 (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'whiteChecker')))
-                                ||
-                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'whiteChecker')))
-                                ||
-                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 8 && checker.type == 'whiteChecker')))
                             )
+                            &&
+                            (
+                                currentChecker.currentPosition - 2 == clickedChecker.currentPosition
+                            )
+
                         ) {
+
+                            console.log("sol komşu")
                             setNextChecker(clickedChecker)
                             // Remove Forced Moves
                             const removeForcedMoves = []
@@ -201,15 +282,10 @@ function GameTable() {
                             });
                             // Clear Killed Checker
                             let leftNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition - 1 && checker.type == 'whiteChecker')))
-                            let rightNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'whiteChecker')))
-                            let forwardNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition + 8 && checker.type == 'whiteChecker')))
-                            console.log("removeForcedMoves", removeForcedMoves)
 
                             let clearedCheckers = []
                             removeForcedMoves.forEach((checker) => {
                                 console.log("leftNeighbour", leftNeighbour)
-                                console.log("rightNeighbour", rightNeighbour)
-                                console.log("forwardNeighbour", forwardNeighbour)
                                 console.log("clearedCheckers", clearedCheckers)
 
                                 if (leftNeighbour) {
@@ -222,6 +298,43 @@ function GameTable() {
                                         clearedCheckers.push(checker)
                                     }
                                 }
+                            })
+                            dispatch(updateCheckers(clearedCheckers))
+                        } else if
+                            (
+                            (forcedMoves.includes(clickedChecker.currentPosition)
+                            )
+                            &&
+                            (
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'whiteChecker')))
+                            )
+                            &&
+                            (
+                                currentChecker.currentPosition + 2 == clickedChecker.currentPosition
+                            )
+                        ) {
+                            console.log("sağ komşu")
+
+                            setNextChecker(clickedChecker)
+                            // Remove Forced Moves
+                            const removeForcedMoves = []
+                            checkers.forEach(checker => {
+                                if (checker.isForcedToKill[0] == clickedChecker.currentPosition) {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                        isForcedToKill: []
+                                    })
+                                } else {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                    })
+                                }
+                            });
+                            // Clear Killed Checker
+                            let rightNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition + 1 && checker.type == 'whiteChecker')))
+                            let clearedCheckers = []
+                            removeForcedMoves.forEach((checker) => {
+                                console.log("rightNeighbour", rightNeighbour)
                                 if (rightNeighbour) {
                                     if (rightNeighbour.currentPosition == checker.currentPosition) {
                                         clearedCheckers.push({
@@ -232,6 +345,47 @@ function GameTable() {
                                         clearedCheckers.push(checker)
                                     }
                                 }
+                            })
+                            console.log("clearedCheckers", clearedCheckers)
+                            dispatch(updateCheckers(clearedCheckers))
+                        } else if
+                            (
+                            (forcedMoves.includes(clickedChecker.currentPosition)
+                            )
+                            &&
+                            (
+                                (checkers.some((checker) => (checker.currentPosition == currentChecker.currentPosition + 8 && checker.type == 'whiteChecker')))
+                            )
+                            &&
+                            (
+                                currentChecker.currentPosition + 16 == clickedChecker.currentPosition
+                            )
+                        ) {
+                            console.log("ileri komşu")
+
+                            setNextChecker(clickedChecker)
+                            // Remove Forced Moves
+                            const removeForcedMoves = []
+                            checkers.forEach(checker => {
+                                if (checker.isForcedToKill[0] == clickedChecker.currentPosition) {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                        isForcedToKill: []
+                                    })
+                                } else {
+                                    removeForcedMoves.push({
+                                        ...checker,
+                                    })
+                                }
+                            });
+                            // Clear Killed Checker
+                            let forwardNeighbour = (checkers.find((checker) => (checker.currentPosition == currentChecker.currentPosition + 8 && checker.type == 'whiteChecker')))
+                            console.log("removeForcedMoves", removeForcedMoves)
+
+                            let clearedCheckers = []
+                            removeForcedMoves.forEach((checker) => {
+                                console.log("forwardNeighbour", forwardNeighbour)
+                                console.log("clearedCheckers", clearedCheckers)
                                 if (forwardNeighbour) {
                                     if (forwardNeighbour.currentPosition == checker.currentPosition) {
                                         clearedCheckers.push({
@@ -244,9 +398,9 @@ function GameTable() {
                                 }
 
                             })
-                            console.log("clearedCheckers", clearedCheckers)
                             dispatch(updateCheckers(clearedCheckers))
-                        } else {
+                        }
+                        else {
                             alert('You Have to Kill Rival Checker')
                         }
                     } else {
@@ -317,7 +471,10 @@ function GameTable() {
             // comparison: nextChecker vs currentChecker.allowedMoves 
             if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
                 dispatch(updateCheckers(checkersNewList2))
-                dispatch(updateTurnOfUser(playerTurn))
+                console.log("checkersNewList2 mı", checkersNewList2)
+                console.log("checkerList mi", checkers)
+
+
                 setCurrentChecker('')
                 setNextChecker('')
             } else {
@@ -344,9 +501,53 @@ function GameTable() {
                         checker).checkersForcedMovesArray
                 })
             })
+
             dispatch(updateCheckers(checkersNewList2))
         }
+        // check if there is any forceToKill Situation so the last player can keep the turn.
+        if (playerTurn == 'player1') {
+            console.log("player1whitekontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker')))
+            console.log("player1blackkontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker')))
 
+            if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
+                &&
+                checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
+            ) {
+                dispatch(updateTurnOfUser(playerTurn))
+            } else if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
+                &&
+                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
+            ) {
+
+            } else if (!checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
+                &&
+                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
+            ) {
+                dispatch(updateTurnOfUser(playerTurn))
+
+            }
+        } else if (playerTurn == 'player2') {
+            console.log("player2whitekontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker')))
+            console.log("player2blackkontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker')))
+
+            if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
+                &&
+                checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
+            ) {
+                dispatch(updateTurnOfUser(playerTurn))
+            } else if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
+                &&
+                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
+            ) {
+
+            } else if (!checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
+                &&
+                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
+            ) {
+                dispatch(updateTurnOfUser(playerTurn))
+
+            }
+        }
     }, [nextChecker])
 
     // Locate Checkers on Table

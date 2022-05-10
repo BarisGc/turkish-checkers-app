@@ -34,7 +34,9 @@ const gameProcess = {
         previousPosition: 0,
         currentPosition: 0,
         newAllowedMoves: [],
-    }
+    },
+    numberOfWhiteCheckers: 16,
+    numberOfBlackCheckers: 16,
 };
 
 // {
@@ -612,11 +614,16 @@ export const turkishCheckersSlice = createSlice({
         updateTurnOfUser: (state, action) => {
             state.gameProcess.turnOfUser = state.gameProcess.turnOfUser == 'player1' ? 'player2' : 'player1'
         },
+        updateCheckersNumbers: (state, action) => {
+            const { numberOfWhiteCheckers, numberOfBlackCheckers } = action.payload
+            state.gameProcess.numberOfWhiteCheckers = numberOfWhiteCheckers
+            state.gameProcess.numberOfBhiteCheckers = numberOfBlackCheckers
+        },
 
     },
     extraReducers: {
     }
 });
 
-export const { updateCheckers, updateTurnOfUser } = turkishCheckersSlice.actions;
+export const { updateCheckers, updateTurnOfUser, updateCheckersNumbers } = turkishCheckersSlice.actions;
 export default turkishCheckersSlice.reducer;
