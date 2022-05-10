@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch, } from 'react-redux';
-import { updateCheckers, updateTurnOfUser, allowedMovesDefiner } from '../redux/turkishCheckersSlice'
+import { updateCheckers, updateTurnOfUser, allowedMovesDefiner, updateWhiteCheckersNumbers, updateBlackCheckersNumbers } from '../redux/turkishCheckersSlice'
 import { SimpleGrid, Box } from '@chakra-ui/react'
 
 function GameTable() {
@@ -188,8 +188,6 @@ function GameTable() {
 
                             let clearedCheckers = []
                             removeForcedMoves.forEach((checker) => {
-                                console.log("forwardNeighbour", forwardNeighbour)
-                                console.log("clearedCheckers", clearedCheckers)
                                 if (forwardNeighbour) {
                                     if (forwardNeighbour.currentPosition == checker.currentPosition) {
                                         clearedCheckers.push({
@@ -203,12 +201,26 @@ function GameTable() {
 
                             })
                             dispatch(updateCheckers(clearedCheckers))
+                            // Keeping the turn if possible
+                            let newBlackCheckersNumbers = clearedCheckers.filter((checker) => (checker.type == 'blackChecker')).length
+                            console.log("newBlackCheckersNumbers", newBlackCheckersNumbers)
+                            console.log("numberOfBlackCheckers", numberOfBlackCheckers)
+                            if (newBlackCheckersNumbers != numberOfBlackCheckers) {
+                                dispatch(updateWhiteCheckersNumbers(newBlackCheckersNumbers))
+                                console.log("1")
+                            } else {
+                                dispatch(updateTurnOfUser(playerTurn))
+                                console.log("2")
+                            }
                         }
+
                         else {
                             alert('You Have to Kill Rival Checker')
                         }
                     } else {
                         setNextChecker(clickedChecker)
+                        dispatch(updateTurnOfUser(playerTurn))
+                        console.log("3")
                     }
                 }
 
@@ -399,12 +411,24 @@ function GameTable() {
 
                             })
                             dispatch(updateCheckers(clearedCheckers))
+                            // Keeping the turn if possible
+                            let newWhiteCheckersNumbers = clearedCheckers.filter((checker) => (checker.type == 'whiteChecker')).length
+                            console.log("newWhiteCheckersNumbers", newWhiteCheckersNumbers)
+                            console.log("numberOfWhiteCheckers", numberOfWhiteCheckers)
+                            if (newWhiteCheckersNumbers != numberOfWhiteCheckers) {
+                                dispatch(updateWhiteCheckersNumbers(newWhiteCheckersNumbers))
+                            } else {
+                                dispatch(updateTurnOfUser(playerTurn))
+                                console.log("4")
+                            }
                         }
                         else {
                             alert('You Have to Kill Rival Checker')
                         }
                     } else {
                         setNextChecker(clickedChecker)
+                        dispatch(updateTurnOfUser(playerTurn))
+                        console.log("5")
                     }
                 }
 
@@ -471,16 +495,14 @@ function GameTable() {
             // comparison: nextChecker vs currentChecker.allowedMoves 
             if (currentChecker.allowedMoves.includes(nextChecker.currentPosition)) {
                 dispatch(updateCheckers(checkersNewList2))
-                console.log("checkersNewList2 mı", checkersNewList2)
-                console.log("checkerList mi", checkers)
-
-
                 setCurrentChecker('')
                 setNextChecker('')
             } else {
                 setCurrentChecker('')
                 setNextChecker('')
                 alert('Not Able To Move')
+                dispatch(updateTurnOfUser(playerTurn))
+                console.log("6")
             }
         }
         // Calculate "allowedMoves" again for each checker
@@ -501,54 +523,33 @@ function GameTable() {
                         checker).checkersForcedMovesArray
                 })
             })
+            let newWhiteCheckersNumbers = checkersNewList2.filter((checker) => (checker.type == 'whiteChecker')).length
+            let newBlackCheckersNumbers = checkersNewList2.filter((checker) => (checker.type == 'blackChecker')).length
+
+            if (newWhiteCheckersNumbers != numberOfWhiteCheckers) {
+                dispatch(updateWhiteCheckersNumbers(newWhiteCheckersNumbers))
+            }
+            if (newBlackCheckersNumbers != numberOfBlackCheckers) {
+                dispatch(updateBlackCheckersNumbers(newBlackCheckersNumbers))
+            }
 
             dispatch(updateCheckers(checkersNewList2))
         }
-        // check if there is any forceToKill Situation so the last player can keep the turn.
-        if (playerTurn == 'player1') {
-            console.log("player1whitekontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker')))
-            console.log("player1blackkontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker')))
 
-            if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
-                &&
-                checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
-            ) {
-                dispatch(updateTurnOfUser(playerTurn))
-            } else if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
-                &&
-                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
-            ) {
 
-            } else if (!checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
-                &&
-                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
-            ) {
-                dispatch(updateTurnOfUser(playerTurn))
 
-            }
-        } else if (playerTurn == 'player2') {
-            console.log("player2whitekontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker')))
-            console.log("player2blackkontrol", checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker')))
-
-            if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
-                &&
-                checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
-            ) {
-                dispatch(updateTurnOfUser(playerTurn))
-            } else if (checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
-                &&
-                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
-            ) {
-
-            } else if (!checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'blackChecker'))
-                &&
-                !checkers.some((checker) => (checker.isForcedToKill.length > 0 && checker.type == 'whiteChecker'))
-            ) {
-                dispatch(updateTurnOfUser(playerTurn))
-
-            }
-        }
     }, [nextChecker])
+
+    // useEffect(() => {
+    //     // check if there is any forceToKill Situation so the last player can keep the turn.
+    //     console.log('2.useeffect çalışıyor mu?')
+    //     if (playerTurn == 'player1') {
+    //         dispatch(updateTurnOfUser('player2'))
+    //     } else {
+    //         dispatch(updateTurnOfUser('player1'))
+    //     }
+    // }, [numberOfWhiteCheckers, numberOfBlackCheckers])
+
 
     // Locate Checkers on Table
     // define checkerLocations

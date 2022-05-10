@@ -614,10 +614,11 @@ export const turkishCheckersSlice = createSlice({
         updateTurnOfUser: (state, action) => {
             state.gameProcess.turnOfUser = state.gameProcess.turnOfUser == 'player1' ? 'player2' : 'player1'
         },
-        updateCheckersNumbers: (state, action) => {
-            const { numberOfWhiteCheckers, numberOfBlackCheckers } = action.payload
-            state.gameProcess.numberOfWhiteCheckers = numberOfWhiteCheckers
-            state.gameProcess.numberOfBhiteCheckers = numberOfBlackCheckers
+        updateWhiteCheckersNumbers: (state, action) => {
+            state.gameProcess.numberOfWhiteCheckers = action.payload
+        },
+        updateBlackCheckersNumbers: (state, action) => {
+            state.gameProcess.numberOfBlackCheckers = action.payload
         },
 
     },
@@ -625,5 +626,5 @@ export const turkishCheckersSlice = createSlice({
     }
 });
 
-export const { updateCheckers, updateTurnOfUser, updateCheckersNumbers } = turkishCheckersSlice.actions;
+export const { updateCheckers, updateTurnOfUser, updateWhiteCheckersNumbers, updateBlackCheckersNumbers } = turkishCheckersSlice.actions;
 export default turkishCheckersSlice.reducer;
